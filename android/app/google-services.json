@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "152901593043",
+    "project_id": "jihad-ecommerce",
+    "storage_bucket": "jihad-ecommerce.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152901593043:android:6d1e769cb914933e5d3126",
+        "android_client_info": {
+          "package_name": "com.example.jihad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL_xo6QlRsDrY_8k4lshToI6QgmAQ_ZBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
