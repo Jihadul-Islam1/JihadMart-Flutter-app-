@@ -1,14 +1,35 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jihad/ui/splash_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(
-    MyApp(),
-  );
+  // On web, Firebase.initializeApp requires explicit FirebaseOptions.
+  // Without this, the app can fail to start and show a blank screen.
+  try {
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyAQC9d7XEDX0yS7MhBRNgal3I8AUN0GVgU",
+          authDomain: "jihad-ecommerce.firebaseapp.com",
+          projectId: "jihad-ecommerce",
+          storageBucket: "jihad-ecommerce.firebasestorage.app",
+          messagingSenderId: "152901593043",
+          appId: "1:152901593043:web:debfea2337ef40d95d3126",
+          measurementId: "G-R1343P5P9H",
+        ),
+      );
+    } else {
+      await Firebase.initializeApp();
+    }
+  } catch (e, st) {
+    // Ensure the app still runs even if Firebase fails to init, and log the error.
+    debugPrint('Firebase initialization failed: $e');
+    debugPrint('$st');
+  }
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +39,8 @@ class MyApp extends StatelessWidget {
       designSize: const Size(375, 812),
       minTextAdapt: true, // লেখা যেন খুব বেশি ছোট বা বড় না হয়
       splitScreenMode: true, // Split screen সাপোর্ট করার জন্য
-      builder: (context, child) { // builder-এর প্যারামিটারগুলো ব্যবহার করা ভালো অভ্যাস
+      builder: (context, child) {
+        // builder-এর প্যারামিটারগুলো ব্যবহার করা ভালো অভ্যাস
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter E-Commerce',

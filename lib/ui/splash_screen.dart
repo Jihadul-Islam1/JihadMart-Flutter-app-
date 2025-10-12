@@ -1,48 +1,95 @@
-import 'dart:async';
-import 'package:jihad/ui/bottom_nav_controller.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jihad/const/AppColors.dart';
-
+import 'package:jihad/ui/bottom_nav_controller.dart';
 import 'package:jihad/ui/login_screen.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
+
   @override
   void initState() {
-    Timer(Duration(seconds: 3),()=>Navigator.push(context, CupertinoPageRoute(builder: (_)=>BottomNavController())));
     super.initState();
+    
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+    
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.2,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+    
+    _opacityAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+    
+    // Continuous blinking with scale effect
+    _animationController.repeat(reverse: true);
+    
+    // Navigate after 3 seconds
+    Future.delayed(Duration(seconds: 4), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    });
   }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.deep_orange,
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "E-Commerce",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 44.sp),
+      backgroundColor: Color.fromARGB(255, 161, 2, 87),
+      body: Center(
+        child: AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Opacity(
+                opacity: _opacityAnimation.value,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Logo
+                    Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/logo/logo1.png'),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                   
+                    SizedBox(height: 10),
+
+                  ],
+                ),
               ),
-              SizedBox(
-                height: 20.h,
-              ),
-              CircularProgressIndicator(
-                color: Colors.white,
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

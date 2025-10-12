@@ -6,6 +6,7 @@ import 'package:jihad/ui/bottom_nav_pages/home.dart';
 import 'package:jihad/ui/bottom_nav_pages/profile.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
 class BottomNavController extends StatefulWidget {
   @override
   _BottomNavControllerState createState() => _BottomNavControllerState();
@@ -86,6 +87,7 @@ class _BottomNavControllerState extends State<BottomNavController> {
             _buildNavItem(1, Icons.favorite, "Favourite"),
             _buildNavItem(2, Icons.shopping_cart, "Cart"),
             _buildNavItem(3, Icons.person, "Profile"),
+
           ],
         ),
       ),

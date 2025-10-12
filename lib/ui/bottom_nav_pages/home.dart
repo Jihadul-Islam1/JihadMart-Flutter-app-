@@ -19,6 +19,9 @@ List<String> _carouselImages = [
   "assets/carousel/slider1.jpg",
   "assets/carousel/slider2.jpg", 
   "assets/carousel/slider3.jpg",
+  "assets/carousel/slider4.jpg",
+  "assets/carousel/slider5.jpg", 
+  "assets/carousel/slider6.jpg",
 ];
   
   var _dotPosition = 0;
@@ -50,6 +53,31 @@ List _products = [
     "product-price": 75.00,
     "product-img": ["assets/products/product4.jpg"],
   },
+    {
+    "product-name": "Nike Air Max",
+    "product-description": "Comfortable running shoes with latest technology",
+    "product-price": 120.00,
+    "product-img": ["assets/products/product5.jpg"],
+  },
+  {
+    "product-name": "Adidas Ultraboost", 
+    "product-description": "Premium running shoes for professional athletes",
+    "product-price": 180.00,
+    "product-img": ["assets/products/product6.jpg"],
+  },
+  {
+    "product-name": "Puma RS-X",
+    "product-description": "Casual sports shoes with modern design",
+    "product-price": 90.00,
+    "product-img": ["assets/products/product7.jpg"],
+  },
+  {
+    "product-name": "Reebok Classic",
+    "product-description": "Vintage style shoes for everyday wear",
+    "product-price": 75.00,
+    "product-img": ["assets/products/product8.jpg"],
+  },
+  
 ];
   @override
   Widget build(BuildContext context) {
