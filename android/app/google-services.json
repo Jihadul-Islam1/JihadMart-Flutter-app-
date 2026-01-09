@@ -12,7 +12,20 @@
           "package_name": "com.example.jihad"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "152901593043-cpad6fvj3btrsm6ndohus91t2ftqdr4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jihad",
+            "certificate_hash": "7b6fe6a708f9fe447881a9c820091cab3dc8beb8"
+          }
+        },
+        {
+          "client_id": "152901593043-9nfii0ehdfdr8veoj1upf5vtko5kfas9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCL_xo6QlRsDrY_8k4lshToI6QgmAQ_ZBU"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "152901593043-9nfii0ehdfdr8veoj1upf5vtko5kfas9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

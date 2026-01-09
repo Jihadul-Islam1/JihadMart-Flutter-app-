@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jihad Mart</string>
+    <!-- Replace these with your actual Facebook App ID and Client Token -->
+    <string name="facebook_app_id">1527148645216088</string>
+    <string name="facebook_client_token">a101c3bbb69b06c1c890f06998c5f3b9</string>
+    <string name="fb_login_protocol_scheme">fb1527148645216088</string>
+</resources>

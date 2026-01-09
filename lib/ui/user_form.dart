@@ -34,19 +34,30 @@ class _UserFormState extends State<UserForm> {
       });
   }
 
-  sendUserDataToDB()async{
-
+  sendUserDataToDB() async {
     final FirebaseAuth _auth = FirebaseAuth.instance;
-    var  currentUser = _auth.currentUser;
+    var currentUser = _auth.currentUser;
 
-    CollectionReference _collectionRef = FirebaseFirestore.instance.collection("users-form-data");
-    return _collectionRef.doc(currentUser!.email).set({
-      "name":_nameController.text,
-      "phone":_phoneController.text,
-      "dob":_dobController.text,
-      "gender":_genderController.text,
-      "age":_ageController.text,
-    }).then((value) => Navigator.push(context, MaterialPageRoute(builder: (_)=>BottomNavController()))).catchError((error)=>print("something is wrong. $error"));
+    CollectionReference _collectionRef = FirebaseFirestore.instance.collection(
+      "users-form-data",
+    );
+    return _collectionRef
+        .doc(currentUser!.email)
+        .set({
+          "name": _nameController.text,
+          "phone": _phoneController.text,
+          "dob": _dobController.text,
+          "gender": _genderController.text,
+          "age": _ageController.text,
+          "role": "user",
+        })
+        .then(
+          (value) => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => BottomNavController()),
+          ),
+        )
+        .catchError((error) => print("something is wrong. $error"));
   }
 
   @override
@@ -60,26 +71,29 @@ class _UserFormState extends State<UserForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 20.h,
-                ),
+                SizedBox(height: 20.h),
                 Text(
                   "Submit the form to continue.",
-                  style:
-                  TextStyle(fontSize: 22.sp, color: AppColors.deep_orange),
+                  style: TextStyle(
+                    fontSize: 22.sp,
+                    color: AppColors.deep_orange,
+                  ),
                 ),
                 Text(
                   "We will not share your information with anyone.",
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Color(0xFFBBBBBB),
-                  ),
+                  style: TextStyle(fontSize: 14.sp, color: Color(0xFFBBBBBB)),
                 ),
-                SizedBox(
-                  height: 15.h,
+                SizedBox(height: 15.h),
+                myTextField(
+                  "enter your name",
+                  TextInputType.text,
+                  _nameController,
                 ),
-                myTextField("enter your name",TextInputType.text,_nameController),
-                myTextField("enter your phone number",TextInputType.number,_phoneController),
+                myTextField(
+                  "enter your phone number",
+                  TextInputType.number,
+                  _phoneController,
+                ),
                 TextField(
                   controller: _dobController,
                   readOnly: true,
@@ -112,14 +126,16 @@ class _UserFormState extends State<UserForm> {
                     ),
                   ),
                 ),
-                myTextField("enter your age",TextInputType.number,_ageController),
-
-                SizedBox(
-                  height: 50.h,
+                myTextField(
+                  "enter your age",
+                  TextInputType.number,
+                  _ageController,
                 ),
 
+                SizedBox(height: 50.h),
+
                 // elevated button
-                customButton("Continue",()=>sendUserDataToDB()),
+                customButton("Continue", () => sendUserDataToDB()),
               ],
             ),
           ),

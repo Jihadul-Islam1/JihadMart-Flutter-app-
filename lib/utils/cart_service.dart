@@ -10,13 +10,22 @@ class CartService {
 
   static void addToCart(Map<String, dynamic> product) {
     // Check if product already in cart
-    bool alreadyInCart = _cartItems.any((item) => item["name"] == product["product-name"]);
-    
-    if (!alreadyInCart) {
+    int index = _cartItems.indexWhere(
+      (item) => item["name"] == product["product-name"],
+    );
+
+    if (index != -1) {
+      _cartItems[index]['quantity'] = (_cartItems[index]['quantity'] ?? 0) + 1;
+    } else {
+      var images = product["product-img"];
+      if (images is! List || images.isEmpty) {
+        images = ["assets/logo/logo1.png"];
+      }
+
       _cartItems.add({
         "name": product["product-name"],
         "price": product["product-price"],
-        "images": product["product-img"],
+        "images": images,
         "quantity": 1,
       });
     }
@@ -41,8 +50,8 @@ class CartService {
   }
 
   static double getTotalPrice() {
-    return _cartItems.fold(0, (total, item) {
-      return total + (item['price'] * item['quantity']);
+    return _cartItems.fold(0.0, (total, item) {
+      return total + ((item['price'] ?? 0) * (item['quantity'] ?? 1));
     });
   }
 
@@ -52,10 +61,14 @@ class CartService {
   }
 
   static void toggleFavourite(Map<String, dynamic> product) {
-    bool isFavourite = _favouriteItems.any((item) => item["name"] == product["product-name"]);
-    
+    bool isFavourite = _favouriteItems.any(
+      (item) => item["name"] == product["product-name"],
+    );
+
     if (isFavourite) {
-      _favouriteItems.removeWhere((item) => item["name"] == product["product-name"]);
+      _favouriteItems.removeWhere(
+        (item) => item["name"] == product["product-name"],
+      );
     } else {
       _favouriteItems.add({
         "name": product["product-name"],
@@ -66,6 +79,8 @@ class CartService {
   }
 
   static bool isFavourite(Map<String, dynamic> product) {
-    return _favouriteItems.any((item) => item["name"] == product["product-name"]);
+    return _favouriteItems.any(
+      (item) => item["name"] == product["product-name"],
+    );
   }
 }

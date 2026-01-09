@@ -3,11 +3,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jihad/const/AppColors.dart';
 import 'package:jihad/ui/bottom_nav_controller.dart';
+import 'package:jihad/ui/admin/admin_dashboard.dart';
 
+import 'package:jihad/ui/email_auth_screen.dart';
+import 'package:jihad/ui/phone_auth_screen.dart';
 import 'package:jihad/ui/registration_screen.dart';
+import 'package:jihad/ui/admin/admin_login_screen.dart';
 import 'package:jihad/widgets/customButton.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:jihad/services/social_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -19,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
   bool _isLoading = false;
+  final SocialAuthService _socialAuthService = SocialAuthService();
 
   // Focus nodes for keyboard management
   FocusNode _emailFocusNode = FocusNode();
@@ -44,18 +50,29 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim()
-      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
 
       if (userCredential.user != null) {
-        Fluttertoast.showToast(msg: "Login successful!");
-        Navigator.pushAndRemoveUntil(
-          context,
-          CupertinoPageRoute(builder: (_) => BottomNavController()),
-              (route) => false,
-        );
+        // Safety check: If this is the admin email, redirect to Admin Dashboard
+        if (userCredential.user!.email == "admin@gmail.com") {
+          Fluttertoast.showToast(msg: "Welcome Admin!");
+          Navigator.pushAndRemoveUntil(
+            context,
+            CupertinoPageRoute(builder: (_) => AdminDashboard()),
+            (route) => false,
+          );
+        } else {
+          Fluttertoast.showToast(msg: "Login successful!");
+          Navigator.pushAndRemoveUntil(
+            context,
+            CupertinoPageRoute(builder: (_) => BottomNavController()),
+            (route) => false,
+          );
+        }
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -71,6 +88,44 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _googleSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+    UserCredential? user = await _socialAuthService.signInWithGoogle();
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (user != null) {
+      Fluttertoast.showToast(msg: "Google Login Successful!");
+      Navigator.pushAndRemoveUntil(
+        context,
+        CupertinoPageRoute(builder: (_) => BottomNavController()),
+        (route) => false,
+      );
+    }
+  }
+
+  Future<void> _facebookSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+    UserCredential? user = await _socialAuthService.signInWithFacebook();
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (user != null) {
+      Fluttertoast.showToast(msg: "Facebook Login Successful!");
+      Navigator.pushAndRemoveUntil(
+        context,
+        CupertinoPageRoute(builder: (_) => BottomNavController()),
+        (route) => false,
+      );
     }
   }
 
@@ -140,10 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           FocusScope.of(context).unfocus();
                           Navigator.pop(context);
                         },
-                        icon: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                        ),
+                        icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       ),
                       Text(
                         "Sign In",
@@ -276,7 +328,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                         });
                                       },
                                       icon: Icon(
-                                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                                        _obscureText
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
                                         size: 20.w,
                                         color: AppColors.deep_orange,
                                       ),
@@ -311,6 +365,141 @@ class _LoginScreenState extends State<LoginScreen> {
                               : customButton("Sign In", signIn),
                           SizedBox(height: 20.h),
 
+                          // Social Login Divider
+                          Row(
+                            children: [
+                              Expanded(child: Divider(color: Colors.grey)),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                child: Text(
+                                  "OR",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                              Expanded(child: Divider(color: Colors.grey)),
+                            ],
+                          ),
+                          SizedBox(height: 20.h),
+
+                          // Social Login Buttons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Google Button
+                              GestureDetector(
+                                onTap: _googleSignIn,
+                                child: Container(
+                                  padding: EdgeInsets.all(10.w),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey[300]!,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.g_mobiledata,
+                                        size: 30.sp,
+                                        color: Colors.red,
+                                      ), // Using Icon as placeholder
+                                      SizedBox(width: 5.w),
+                                      Text(
+                                        "Google",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 20.w),
+
+                              // Facebook Button
+                              GestureDetector(
+                                onTap: _facebookSignIn,
+                                child: Container(
+                                  padding: EdgeInsets.all(10.w),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey[300]!,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.facebook,
+                                        size: 30.sp,
+                                        color: Colors.blue,
+                                      ),
+                                      SizedBox(width: 5.w),
+                                      Text(
+                                        "Facebook",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20.h),
+
+                          // Email OTP Button
+                          Center(
+                            child: TextButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (_) => EmailAuthScreen(),
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.email,
+                                color: AppColors.deep_orange,
+                              ),
+                              label: Text(
+                                "Login with Email OTP",
+                                style: TextStyle(
+                                  color: AppColors.deep_orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Phone Login Button
+                          Center(
+                            child: TextButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (_) => PhoneAuthScreen(),
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.phone,
+                                color: AppColors.deep_orange,
+                              ),
+                              label: Text(
+                                "Login with Phone",
+                                style: TextStyle(
+                                  color: AppColors.deep_orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+
                           // Sign Up Link
                           Center(
                             child: Wrap(
@@ -329,7 +518,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Navigator.push(
                                       context,
                                       CupertinoPageRoute(
-                                          builder: (context) => RegistrationScreen()
+                                        builder: (context) =>
+                                            RegistrationScreen(),
                                       ),
                                     );
                                   },
@@ -341,10 +531,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: AppColors.deep_orange,
                                     ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
-                          )
+                          ),
+
+                          SizedBox(height: 20.h),
+                          // Admin Login Link
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (_) => AdminLoginScreen(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Admin Login",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),

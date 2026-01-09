@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/services/social_auth_service.dart';
+import 'package:jihad/ui/bottom_nav_controller.dart';
 import 'package:jihad/ui/login_screen.dart';
 import 'package:jihad/ui/user_form.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +19,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
   bool _isLoading = false;
+  final SocialAuthService _socialAuthService = SocialAuthService();
 
   signUp() async {
     // Validation
@@ -40,20 +43,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text
-      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
 
       if (userCredential.user != null) {
         Fluttertoast.showToast(msg: "Registration successful!");
-        Navigator.push(context, CupertinoPageRoute(builder: (_)=>UserForm()));
+        Navigator.push(context, CupertinoPageRoute(builder: (_) => UserForm()));
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         Fluttertoast.showToast(msg: "The password provided is too weak.");
       } else if (e.code == 'email-already-in-use') {
-        Fluttertoast.showToast(msg: "The account already exists for that email.");
+        Fluttertoast.showToast(
+          msg: "The account already exists for that email.",
+        );
       } else {
         Fluttertoast.showToast(msg: "Error: ${e.message}");
       }
@@ -63,6 +69,44 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _googleSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+    UserCredential? user = await _socialAuthService.signInWithGoogle();
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (user != null) {
+      Fluttertoast.showToast(msg: "Google Login Successful!");
+      Navigator.pushAndRemoveUntil(
+        context,
+        CupertinoPageRoute(builder: (_) => BottomNavController()),
+        (route) => false,
+      );
+    }
+  }
+
+  Future<void> _facebookSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+    UserCredential? user = await _socialAuthService.signInWithFacebook();
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (user != null) {
+      Fluttertoast.showToast(msg: "Facebook Login Successful!");
+      Navigator.pushAndRemoveUntil(
+        context,
+        CupertinoPageRoute(builder: (_) => BottomNavController()),
+        (route) => false,
+      );
     }
   }
 
@@ -91,10 +135,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   children: [
                     IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                     ),
                     Text(
                       "Sign Up",
@@ -124,7 +165,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         Text(
                           "Welcome Buddy!",
                           style: TextStyle(
-                              fontSize: 22.sp, color: AppColors.deep_orange),
+                            fontSize: 22.sp,
+                            color: AppColors.deep_orange,
+                          ),
                         ),
                         Text(
                           "Create your account to get started",
@@ -142,8 +185,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               height: 48.h,
                               width: 41.w,
                               decoration: BoxDecoration(
-                                  color: AppColors.deep_orange,
-                                  borderRadius: BorderRadius.circular(12.r)),
+                                color: AppColors.deep_orange,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
                               child: Center(
                                 child: Icon(
                                   Icons.email_outlined,
@@ -181,8 +225,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               height: 48.h,
                               width: 41.w,
                               decoration: BoxDecoration(
-                                  color: AppColors.deep_orange,
-                                  borderRadius: BorderRadius.circular(12.r)),
+                                color: AppColors.deep_orange,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
                               child: Center(
                                 child: Icon(
                                   Icons.lock_outline,
@@ -214,7 +259,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       });
                                     },
                                     icon: Icon(
-                                      _obscureText ? Icons.visibility : Icons.visibility_off,
+                                      _obscureText
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
                                       size: 20.w,
                                       color: AppColors.deep_orange,
                                     ),
@@ -235,9 +282,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: _isLoading
                                 ? CircularProgressIndicator(color: Colors.white)
                                 : Text(
-                              "Continue",
-                              style: TextStyle(color: Colors.white, fontSize: 18.sp),
-                            ),
+                                    "Continue",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18.sp,
+                                    ),
+                                  ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.deep_orange,
                               elevation: 3,
@@ -268,13 +318,80 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ),
                               onTap: () {
                                 Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                        builder: (context) => LoginScreen()));
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => LoginScreen(),
+                                  ),
+                                );
                               },
-                            )
+                            ),
                           ],
-                        )
+                        ),
+
+                        SizedBox(height: 20.h),
+                        Center(
+                          child: Text(
+                            "OR",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Google Button
+                            GestureDetector(
+                              onTap: _isLoading ? null : _googleSignIn,
+                              child: Container(
+                                width: 40.w,
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Image.asset(
+                                    "assets/icons/google.png",
+                                    errorBuilder: (c, o, s) => Icon(
+                                      Icons.g_mobiledata,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 20.w),
+                            // Facebook Button
+                            GestureDetector(
+                              onTap: _isLoading ? null : _facebookSignIn,
+                              child: Container(
+                                width: 40.w,
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Image.asset(
+                                    "assets/icons/facebook.png",
+                                    errorBuilder: (c, o, s) => Icon(
+                                      Icons.facebook,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20.h),
                       ],
                     ),
                   ),

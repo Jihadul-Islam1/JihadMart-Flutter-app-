@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jihad/const/AppColors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jihad/ui/product_details_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -9,36 +10,36 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   var inputText = "";
-  
-  // Sample products data - তোমার আসল products data দিয়ে replace করবে
-// SearchScreen.dart file এ _allProducts list টি খুঁজে এই data দিয়ে replace করো:
 
-List<Map<String, dynamic>> _allProducts = [
-  {
-    "product-name": "Nike Air Max",
-    "product-description": "Comfortable running shoes with latest technology",
-    "product-price": 120.00,
-    "product-img": ["assets/products/product1.jpg"],
-  },
-  {
-    "product-name": "Adidas Ultraboost", 
-    "product-description": "Premium running shoes for professional athletes",
-    "product-price": 180.00,
-    "product-img": ["assets/products/product2.jpg"],
-  },
-  {
-    "product-name": "Puma RS-X",
-    "product-description": "Casual sports shoes with modern design",
-    "product-price": 90.00,
-    "product-img": ["assets/products/product3.jpg"],
-  },
-  {
-    "product-name": "Reebok Classic",
-    "product-description": "Vintage style shoes for everyday wear",
-    "product-price": 75.00,
-    "product-img": ["assets/products/product4.jpg"],
-  },
-];
+  // Sample products data - তোমার আসল products data দিয়ে replace করবে
+  // SearchScreen.dart file এ _allProducts list টি খুঁজে এই data দিয়ে replace করো:
+
+  List<Map<String, dynamic>> _allProducts = [
+    {
+      "product-name": "Nike Air Max",
+      "product-description": "Comfortable running shoes with latest technology",
+      "product-price": 120.00,
+      "product-img": ["assets/products/product1.jpg"],
+    },
+    {
+      "product-name": "Adidas Ultraboost",
+      "product-description": "Premium running shoes for professional athletes",
+      "product-price": 180.00,
+      "product-img": ["assets/products/product2.jpg"],
+    },
+    {
+      "product-name": "Puma RS-X",
+      "product-description": "Casual sports shoes with modern design",
+      "product-price": 90.00,
+      "product-img": ["assets/products/product3.jpg"],
+    },
+    {
+      "product-name": "Reebok Classic",
+      "product-description": "Vintage style shoes for everyday wear",
+      "product-price": 75.00,
+      "product-img": ["assets/products/product4.jpg"],
+    },
+  ];
   List<Map<String, dynamic>> _filteredProducts = [];
 
   @override
@@ -54,11 +55,13 @@ List<Map<String, dynamic>> _allProducts = [
       } else {
         _filteredProducts = _allProducts.where((product) {
           final productName = product["product-name"].toString().toLowerCase();
-          final productDesc = product["product-description"].toString().toLowerCase();
+          final productDesc = product["product-description"]
+              .toString()
+              .toLowerCase();
           final searchLower = searchText.toLowerCase();
-          
-          return productName.contains(searchLower) || 
-                 productDesc.contains(searchLower);
+
+          return productName.contains(searchLower) ||
+              productDesc.contains(searchLower);
         }).toList();
       }
     });
@@ -77,10 +80,7 @@ List<Map<String, dynamic>> _allProducts = [
         ),
         title: Text(
           "Search Products",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
       ),
       body: SafeArea(
@@ -121,9 +121,9 @@ List<Map<String, dynamic>> _allProducts = [
                   },
                 ),
               ),
-              
+
               SizedBox(height: 10.h),
-              
+
               // Search Results Count
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -156,9 +156,9 @@ List<Map<String, dynamic>> _allProducts = [
                   ],
                 ),
               ),
-              
+
               SizedBox(height: 10.h),
-              
+
               // Search Results
               Expanded(
                 child: _filteredProducts.isEmpty
@@ -211,7 +211,9 @@ List<Map<String, dynamic>> _allProducts = [
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
                                   image: DecorationImage(
-                                    image: AssetImage(product['product-img'][0]),
+                                    image: AssetImage(
+                                      product['product-img'][0],
+                                    ),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -238,7 +240,7 @@ List<Map<String, dynamic>> _allProducts = [
                                   ),
                                   SizedBox(height: 4.h),
                                   Text(
-                                    "\$${product['product-price'].toString()}",
+                                    "৳${product['product-price'].toString()}",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16.sp,
@@ -248,10 +250,12 @@ List<Map<String, dynamic>> _allProducts = [
                                 ],
                               ),
                               onTap: () {
-                                // Product details screen এ navigate করবে
-                                // Navigator.push(context, MaterialPageRoute(
-                                //   builder: (_) => ProductDetails(product)
-                                // ));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ProductDetails(product),
+                                  ),
+                                );
                               },
                             ),
                           );

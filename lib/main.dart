@@ -3,9 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jihad/ui/splash_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Load environment variables from .env (non-fatal if missing)
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (_) {}
   // On web, Firebase.initializeApp requires explicit FirebaseOptions.
   // Without this, the app can fail to start and show a blank screen.
   try {
@@ -29,10 +35,11 @@ void main() async {
     debugPrint('Firebase initialization failed: $e');
     debugPrint('$st');
   }
-  runApp(MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(

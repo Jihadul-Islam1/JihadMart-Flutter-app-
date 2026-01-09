@@ -1,0 +1,245 @@
+import 'package:email_otp/email_otp.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/ui/bottom_nav_controller.dart';
+
+class EmailAuthScreen extends StatefulWidget {
+  const EmailAuthScreen({Key? key}) : super(key: key);
+
+  @override
+  _EmailAuthScreenState createState() => _EmailAuthScreenState();
+}
+
+class _EmailAuthScreenState extends State<EmailAuthScreen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _otpController = TextEditingController();
+  bool _isLoading = false;
+  bool _isOTPSent = false;
+
+  // Initialize EmailOTP
+  final EmailOTP _emailOTP = EmailOTP();
+
+  // Send OTP
+  Future<void> _sendOTP() async {
+    if (_emailController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Please enter email address");
+      return;
+    }
+
+    if (!_emailController.text.contains('@')) {
+      Fluttertoast.showToast(msg: "Please enter a valid email");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Configure EmailOTP
+      _emailOTP.setConfig(
+        appEmail: "noreply@jihadmart.com",
+        appName: "Jihad Mart",
+        userEmail: _emailController.text,
+        otpLength: 6,
+        otpType: OTPType.digitsOnly,
+      );
+
+      bool result = await _emailOTP.sendOTP();
+
+      if (result) {
+        setState(() {
+          _isOTPSent = true;
+          _isLoading = false;
+        });
+        Fluttertoast.showToast(msg: "OTP Sent to your email!");
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        Fluttertoast.showToast(msg: "Failed to send OTP. Try again.");
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      Fluttertoast.showToast(msg: "Error: $e");
+    }
+  }
+
+  // Verify OTP
+  Future<void> _verifyOTP() async {
+    if (_otpController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Please enter OTP");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      bool result = await _emailOTP.verifyOTP(otp: _otpController.text);
+
+      if (result) {
+        Fluttertoast.showToast(msg: "Email Verified Successfully!");
+
+        // Since we can't "Login" to Firebase with just OTP (without password),
+        // We will redirect to Registration Screen to complete profile
+        // Or if you want to simulate login, you can go to Home.
+        // Here we go to Home for demo purposes.
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(builder: (_) => BottomNavController()),
+          (route) => false,
+        );
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        Fluttertoast.showToast(msg: "Invalid OTP");
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      Fluttertoast.showToast(msg: "Error verifying OTP");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.deep_orange,
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 150.h,
+              width: ScreenUtil().screenWidth,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                    ),
+                    Text(
+                      "Email OTP Login",
+                      style: TextStyle(fontSize: 22.sp, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                width: ScreenUtil().screenWidth,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(28.r),
+                    topRight: Radius.circular(28.r),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20.w),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20.h),
+                      Text(
+                        _isOTPSent ? "Enter OTP" : "Enter Email Address",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          color: AppColors.deep_orange,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      Text(
+                        _isOTPSent
+                            ? "We have sent a 6-digit code to ${_emailController.text}"
+                            : "We will send an OTP to verify your email",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      SizedBox(height: 30.h),
+
+                      if (!_isOTPSent)
+                        TextField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            hintText: "example@gmail.com",
+                            labelText: "Email Address",
+                            prefixIcon: Icon(
+                              Icons.email,
+                              color: AppColors.deep_orange,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                          ),
+                        )
+                      else
+                        TextField(
+                          controller: _otpController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 6,
+                          decoration: InputDecoration(
+                            hintText: "123456",
+                            labelText: "OTP",
+                            prefixIcon: Icon(
+                              Icons.lock,
+                              color: AppColors.deep_orange,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                          ),
+                        ),
+
+                      SizedBox(height: 30.h),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50.h,
+                        child: ElevatedButton(
+                          onPressed: _isLoading
+                              ? null
+                              : (_isOTPSent ? _verifyOTP : _sendOTP),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.deep_orange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                          ),
+                          child: _isLoading
+                              ? CircularProgressIndicator(color: Colors.white)
+                              : Text(
+                                  _isOTPSent ? "Verify OTP" : "Send OTP",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18.sp,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

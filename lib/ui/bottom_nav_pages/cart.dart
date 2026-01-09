@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:jihad/const/AppColors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jihad/utils/cart_service.dart'; // Import the new service
-import 'package:jihad/ui/bottom_nav_controller.dart'; 
+import 'package:jihad/ui/bottom_nav_controller.dart';
+import 'package:jihad/ui/checkout_screen.dart';
 
 class Cart extends StatefulWidget {
   @override
@@ -42,7 +43,7 @@ class _CartState extends State<Cart> {
     setState(() {
       String itemName = _cartItems[index]['name'];
       CartService.removeFromCart(index);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("$itemName removed from cart"),
@@ -81,46 +82,11 @@ class _CartState extends State<Cart> {
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Order Confirmation"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Total Amount: \$$_totalPrice"),
-            SizedBox(height: 10),
-            Text("Number of items: ${_cartItems.length}"),
-            SizedBox(height: 10),
-            Text("Proceed with checkout?"),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("Cancel", style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                CartService.clearCart();
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Order placed successfully!"),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 3),
-                ),
-              );
-            },
-            child: Text("Confirm Order"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.deep_orange,
-            ),
-          ),
-        ],
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (_) =>
+            CheckoutScreen(cartItems: _cartItems, totalAmount: _totalPrice),
       ),
     );
   }
@@ -128,16 +94,16 @@ class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
           "My Cart",
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontSize: 20.sp,
+            fontSize: 24.sp,
           ),
         ),
         centerTitle: true,
@@ -154,33 +120,6 @@ class _CartState extends State<Cart> {
       body: SafeArea(
         child: Column(
           children: [
-            // Cart Items Count
-            if (_cartItems.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Items in cart: ${_cartItems.length}",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      "Total: \$$_totalPrice",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.deep_orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
             // Cart Items List
             Expanded(
               child: _cartItems.isEmpty
@@ -188,147 +127,216 @@ class _CartState extends State<Cart> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.shopping_cart_outlined,
-                            size: 80.sp,
-                            color: Colors.grey[300],
-                          ),
-                          SizedBox(height: 16.h),
-                          Text(
-                            "Your cart is empty",
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              color: Colors.grey[500],
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  blurRadius: 10,
+                                  spreadRadius: 5,
+                                ),
+                              ],
                             ),
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            "Add some products to your cart",
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey[400],
+                            child: Icon(
+                              Icons.shopping_cart_outlined,
+                              size: 60.sp,
+                              color: AppColors.deep_orange,
                             ),
                           ),
                           SizedBox(height: 20.h),
+                          Text(
+                            "Your cart is empty",
+                            style: TextStyle(
+                              fontSize: 20.sp,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            "Looks like you haven't added\nanything to your cart yet",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          SizedBox(height: 30.h),
                           ElevatedButton(
                             onPressed: () {
                               Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BottomNavController(), // তোমার main navigation
-      ),
-    );
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BottomNavController(),
+                                ),
+                              );
                             },
-                            child: Text("Continue Shopping"),
+                            child: Text(
+                              "Start Shopping",
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.deep_orange,
                               padding: EdgeInsets.symmetric(
-                                horizontal: 24.w,
-                                vertical: 12.h,
+                                horizontal: 40.w,
+                                vertical: 15.h,
                               ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              elevation: 5,
                             ),
                           ),
                         ],
                       ),
                     )
                   : ListView.builder(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 10.h,
+                      ),
                       itemCount: _cartItems.length,
                       itemBuilder: (context, index) {
                         final item = _cartItems[index];
-                        return Card(
-                          elevation: 3,
-                          margin: EdgeInsets.only(bottom: 12.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        return Dismissible(
+                          key: Key(item['name']),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.only(right: 20.w),
+                            margin: EdgeInsets.only(bottom: 15.h),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Icon(Icons.delete, color: Colors.red),
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.all(12.w),
+                          onDismissed: (direction) {
+                            _removeItem(index);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 15.h),
+                            padding: EdgeInsets.all(10.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                            ),
                             child: Row(
                               children: [
                                 // Product Image
                                 Container(
                                   width: 80.w,
-                                  height: 80.h,
+                                  height: 80.w,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: Color(0xFFF5F5F5),
                                     image: DecorationImage(
-                                      image: AssetImage(item['images'][0]),
+                                      image:
+                                          (item['images'][0] as String)
+                                              .startsWith('http')
+                                          ? NetworkImage(item['images'][0])
+                                          : AssetImage(item['images'][0])
+                                                as ImageProvider,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 12.w),
-                                
-                                // Product Details and Controls
+                                SizedBox(width: 15.w),
+
+                                // Product Details
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         item['name'],
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16.sp,
+                                          color: Colors.black87,
                                         ),
-                                        maxLines: 2,
+                                        maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      SizedBox(height: 4.h),
+                                      SizedBox(height: 5.h),
                                       Text(
-                                        "\$${item['price']}",
+                                        "Size: M | Color: Black", // Placeholder
                                         style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: AppColors.deep_orange,
-                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[500],
                                         ),
                                       ),
-                                      SizedBox(height: 8.h),
-                                      
-                                      // Quantity Controls
+                                      SizedBox(height: 10.h),
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
+                                          Text(
+                                            "৳${item['price']}",
+                                            style: TextStyle(
+                                              fontSize: 18.sp,
+                                              color: AppColors.deep_orange,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+
+                                          // Quantity Controls
                                           Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 8.w,
+                                              vertical: 4.h,
+                                            ),
                                             decoration: BoxDecoration(
-                                              color: Colors.grey[100],
-                                              borderRadius: BorderRadius.circular(20),
+                                              color: Color(0xFFF5F5F5),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                             ),
                                             child: Row(
                                               children: [
-                                                IconButton(
-                                                  icon: Icon(Icons.remove, size: 18.sp),
-                                                  onPressed: () => _decrementQuantity(index),
-                                                  padding: EdgeInsets.zero,
-                                                  constraints: BoxConstraints(),
-                                                ),
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: 12.w,
-                                                    vertical: 4.h,
-                                                  ),
-                                                  child: Text(
-                                                    item['quantity'].toString(),
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 14.sp,
-                                                    ),
+                                                InkWell(
+                                                  onTap: () =>
+                                                      _decrementQuantity(index),
+                                                  child: Icon(
+                                                    Icons.remove,
+                                                    size: 16.sp,
+                                                    color: Colors.black54,
                                                   ),
                                                 ),
-                                                IconButton(
-                                                  icon: Icon(Icons.add, size: 18.sp),
-                                                  onPressed: () => _incrementQuantity(index),
-                                                  padding: EdgeInsets.zero,
-                                                  constraints: BoxConstraints(),
+                                                SizedBox(width: 10.w),
+                                                Text(
+                                                  item['quantity'].toString(),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14.sp,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10.w),
+                                                InkWell(
+                                                  onTap: () =>
+                                                      _incrementQuantity(index),
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    size: 16.sp,
+                                                    color: Colors.black54,
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                          Spacer(),
-                                          IconButton(
-                                            icon: Icon(Icons.delete, color: Colors.red),
-                                            onPressed: () => _removeItem(index),
-                                            tooltip: "Remove item",
                                           ),
                                         ],
                                       ),
@@ -342,24 +350,21 @@ class _CartState extends State<Cart> {
                       },
                     ),
             ),
-            
+
             // Checkout Section
             if (_cartItems.isNotEmpty)
               Container(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.all(20.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.1),
-                      blurRadius: 10,
+                      blurRadius: 20,
                       offset: Offset(0, -5),
                     ),
                   ],
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
                 ),
                 child: Column(
                   children: [
@@ -367,40 +372,83 @@ class _CartState extends State<Cart> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Total Amount:",
+                          "Subtotal",
                           style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[600],
+                            fontSize: 14.sp,
                           ),
                         ),
                         Text(
-                          "\$$_totalPrice",
+                          "৳$_totalPrice",
                           style: TextStyle(
-                            fontSize: 22.sp,
                             fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Shipping",
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        Text(
+                          "৳5.00",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(height: 30.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Total",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.sp,
+                          ),
+                        ),
+                        Text(
+                          "৳${_totalPrice + 5.00}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.sp,
                             color: AppColors.deep_orange,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 20.h),
                     SizedBox(
                       width: double.infinity,
-                      height: 50.h,
+                      height: 55.h,
                       child: ElevatedButton(
                         onPressed: _checkout,
                         child: Text(
                           "Proceed to Checkout",
                           style: TextStyle(
-                            fontSize: 18.sp,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.deep_orange,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                           ),
+                          elevation: 5,
+                          shadowColor: AppColors.deep_orange.withOpacity(0.4),
                         ),
                       ),
                     ),
