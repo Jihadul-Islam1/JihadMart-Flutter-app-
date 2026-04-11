@@ -1,22 +1,26 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
+import 'package:jihad/features/shared/presentation/screens/role_gate_screen.dart';
 import 'package:jihad/services/social_auth_service.dart';
-import 'package:jihad/ui/bottom_nav_controller.dart';
 import 'package:jihad/ui/login_screen.dart';
 import 'package:jihad/ui/user_form.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
+
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
   bool _isLoading = false;
   final SocialAuthService _socialAuthService = SocialAuthService();
@@ -47,7 +51,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           .createUserWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
-          );
+          )
+          .timeout(const Duration(seconds: 12));
 
       if (userCredential.user != null) {
         Fluttertoast.showToast(msg: "Registration successful!");
@@ -63,12 +68,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       } else {
         Fluttertoast.showToast(msg: "Error: ${e.message}");
       }
+    } on TimeoutException {
+      Fluttertoast.showToast(
+        msg: "Signup timeout. Check internet/Firebase and try again.",
+      );
     } catch (e) {
       Fluttertoast.showToast(msg: "Something went wrong");
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -85,7 +96,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       Fluttertoast.showToast(msg: "Google Login Successful!");
       Navigator.pushAndRemoveUntil(
         context,
-        CupertinoPageRoute(builder: (_) => BottomNavController()),
+        CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
         (route) => false,
       );
     }
@@ -104,7 +115,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       Fluttertoast.showToast(msg: "Facebook Login Successful!");
       Navigator.pushAndRemoveUntil(
         context,
-        CupertinoPageRoute(builder: (_) => BottomNavController()),
+        CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
         (route) => false,
       );
     }
@@ -120,7 +131,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.deep_orange,
+      backgroundColor: AppColors.deepOrange,
       body: SafeArea(
         child: Column(
           children: [
@@ -166,7 +177,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           "Welcome Buddy!",
                           style: TextStyle(
                             fontSize: 22.sp,
-                            color: AppColors.deep_orange,
+                            color: AppColors.deepOrange,
                           ),
                         ),
                         Text(
@@ -185,7 +196,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               height: 48.h,
                               width: 41.w,
                               decoration: BoxDecoration(
-                                color: AppColors.deep_orange,
+                                color: AppColors.deepOrange,
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Center(
@@ -209,7 +220,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   labelText: 'EMAIL',
                                   labelStyle: TextStyle(
                                     fontSize: 15.sp,
-                                    color: AppColors.deep_orange,
+                                    color: AppColors.deepOrange,
                                   ),
                                 ),
                               ),
@@ -225,7 +236,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               height: 48.h,
                               width: 41.w,
                               decoration: BoxDecoration(
-                                color: AppColors.deep_orange,
+                                color: AppColors.deepOrange,
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Center(
@@ -250,7 +261,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   labelText: 'PASSWORD',
                                   labelStyle: TextStyle(
                                     fontSize: 15.sp,
-                                    color: AppColors.deep_orange,
+                                    color: AppColors.deepOrange,
                                   ),
                                   suffixIcon: IconButton(
                                     onPressed: () {
@@ -263,7 +274,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           ? Icons.visibility
                                           : Icons.visibility_off,
                                       size: 20.w,
-                                      color: AppColors.deep_orange,
+                                      color: AppColors.deepOrange,
                                     ),
                                   ),
                                 ),
@@ -279,6 +290,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           height: 56.h,
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : signUp,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.deepOrange,
+                              elevation: 3,
+                            ),
                             child: _isLoading
                                 ? CircularProgressIndicator(color: Colors.white)
                                 : Text(
@@ -288,10 +303,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       fontSize: 18.sp,
                                     ),
                                   ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.deep_orange,
-                              elevation: 3,
-                            ),
                           ),
                         ),
                         SizedBox(height: 20.h),
@@ -313,7 +324,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.deep_orange,
+                                  color: AppColors.deepOrange,
                                 ),
                               ),
                               onTap: () {
@@ -324,19 +335,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                 );
                               },
-                            ),
+                            )
                           ],
                         ),
-
-                        SizedBox(height: 20.h),
+                        SizedBox(
+                          height: 10.h,
+                        ),
                         Center(
                           child: Text(
-                            "OR",
-                            style: TextStyle(color: Colors.grey),
+                            "--OR--",
+                            style: TextStyle(
+                                fontSize: 18.sp, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        SizedBox(height: 20.h),
-
+                        SizedBox(
+                          height: 10.h,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

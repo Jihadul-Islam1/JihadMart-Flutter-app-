@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/utils/gift_card_service.dart';
 
 class GiftCardScreen extends StatefulWidget {
+  const GiftCardScreen({super.key});
+
   @override
   _GiftCardScreenState createState() => _GiftCardScreenState();
 }
@@ -49,9 +51,9 @@ class _GiftCardScreenState extends State<GiftCardScreen>
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.deep_orange,
+          labelColor: AppColors.deepOrange,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: AppColors.deep_orange,
+          indicatorColor: AppColors.deepOrange,
           tabs: [
             Tab(text: "My Cards"),
             Tab(text: "Redeem"),
@@ -80,14 +82,14 @@ class _GiftCardScreenState extends State<GiftCardScreen>
             padding: EdgeInsets.all(25.w),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.deep_orange, Colors.orange],
+                colors: [AppColors.deepOrange, Colors.orange],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.deep_orange.withOpacity(0.4),
+                  color: AppColors.deepOrange.withOpacity(0.4),
                   blurRadius: 15,
                   offset: Offset(0, 8),
                 ),
@@ -133,7 +135,7 @@ class _GiftCardScreenState extends State<GiftCardScreen>
               Icons.card_giftcard,
             )
           else
-            ...myCards.map((card) => _buildGiftCardItem(card)).toList(),
+            ...myCards.map((card) => _buildGiftCardItem(card)),
         ],
       ),
     );
@@ -237,7 +239,7 @@ class _GiftCardScreenState extends State<GiftCardScreen>
       padding: EdgeInsets.all(20.w),
       child: Column(
         children: [
-          Icon(Icons.card_giftcard, size: 80.sp, color: AppColors.deep_orange),
+          Icon(Icons.card_giftcard, size: 80.sp, color: AppColors.deepOrange),
           SizedBox(height: 20.h),
           Text(
             "Gift Card Redeem করুন",
@@ -280,7 +282,7 @@ class _GiftCardScreenState extends State<GiftCardScreen>
             child: ElevatedButton(
               onPressed: () => _redeemCard(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.deep_orange,
+                backgroundColor: AppColors.deepOrange,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -408,7 +410,7 @@ class _GiftCardScreenState extends State<GiftCardScreen>
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -485,7 +487,7 @@ class _GiftCardScreenState extends State<GiftCardScreen>
               style: TextStyle(
                 fontSize: 36.sp,
                 fontWeight: FontWeight.bold,
-                color: AppColors.deep_orange,
+                color: AppColors.deepOrange,
               ),
             ),
             SizedBox(height: 20),
@@ -528,7 +530,7 @@ class _GiftCardScreenState extends State<GiftCardScreen>
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.deep_orange,
+              backgroundColor: AppColors.deepOrange,
             ),
             child: Text(
               "৳$amount দিয়ে কিনুন",

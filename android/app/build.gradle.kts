@@ -53,6 +53,7 @@ dependencies {
 
     // Add the dependency for Firebase Analytics
     implementation("com.google.firebase:firebase-analytics")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     implementation("androidx.multidex:multidex:2.0.1")    // Add other Firebase dependencies as needed
     // implementation("com.google.firebase:firebase-auth")

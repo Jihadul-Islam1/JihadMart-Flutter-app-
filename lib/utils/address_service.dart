@@ -1,5 +1,5 @@
 class AddressService {
-  static List<Map<String, dynamic>> _addresses = [];
+  static final List<Map<String, dynamic>> _addresses = [];
   static int? _defaultAddressIndex;
 
   static List<Map<String, dynamic>> getAddresses() {

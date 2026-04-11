@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 
 class LiveChatScreen extends StatefulWidget {
+  const LiveChatScreen({super.key});
+
   @override
   _LiveChatScreenState createState() => _LiveChatScreenState();
 }
@@ -11,7 +13,7 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  List<Map<String, dynamic>> _messages = [
+  final List<Map<String, dynamic>> _messages = [
     {
       'text':
           'আসসালামু আলাইকুম! 👋 আমি আপনার সাহায্যকারী। কীভাবে সাহায্য করতে পারি?',
@@ -131,7 +133,7 @@ Profile > Return/Refund থেকে রিকোয়েস্ট করুন
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: AppColors.deep_orange,
+        backgroundColor: AppColors.deepOrange,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -144,7 +146,7 @@ Profile > Return/Refund থেকে রিকোয়েস্ট করুন
               radius: 18.r,
               child: Icon(
                 Icons.support_agent,
-                color: AppColors.deep_orange,
+                color: AppColors.deepOrange,
                 size: 22.sp,
               ),
             ),
@@ -210,7 +212,7 @@ Profile > Return/Refund থেকে রিকোয়েস্ট করুন
           ),
 
           // Quick Replies
-          Container(
+          SizedBox(
             height: 50.h,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -228,13 +230,13 @@ Profile > Return/Refund থেকে রিকোয়েস্ট করুন
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.deep_orange),
+                      border: Border.all(color: AppColors.deepOrange),
                     ),
                     child: Center(
                       child: Text(
                         _quickReplies[index],
                         style: TextStyle(
-                          color: AppColors.deep_orange,
+                          color: AppColors.deepOrange,
                           fontSize: 13.sp,
                         ),
                       ),
@@ -289,7 +291,7 @@ Profile > Return/Refund থেকে রিকোয়েস্ট করুন
                   child: Container(
                     padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.deep_orange,
+                      color: AppColors.deepOrange,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(Icons.send, color: Colors.white, size: 20.sp),
@@ -324,7 +326,7 @@ Profile > Return/Refund থেকে রিকোয়েস্ট করুন
             Container(
               padding: EdgeInsets.all(15.w),
               decoration: BoxDecoration(
-                color: isBot ? Colors.white : AppColors.deep_orange,
+                color: isBot ? Colors.white : AppColors.deepOrange,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),

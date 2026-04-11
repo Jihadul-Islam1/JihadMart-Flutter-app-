@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/ui/bottom_nav_pages/cart.dart';
 import 'package:jihad/ui/bottom_nav_pages/favourite.dart';
 import 'package:jihad/ui/bottom_nav_pages/home.dart';
@@ -8,11 +8,13 @@ import 'package:jihad/ui/bottom_nav_pages/ai_chat.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BottomNavController extends StatefulWidget {
+  const BottomNavController({super.key});
+
   @override
-  _BottomNavControllerState createState() => _BottomNavControllerState();
+  BottomNavControllerState createState() => BottomNavControllerState();
 }
 
-class _BottomNavControllerState extends State<BottomNavController> {
+class BottomNavControllerState extends State<BottomNavController> {
   final _pages = [Home(), Favourite(), Cart(), AIChatPage(), Profile()];
 
   var _currentIndex = 0;
@@ -31,9 +33,9 @@ class _BottomNavControllerState extends State<BottomNavController> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withAlpha(25),
               blurRadius: 20,
-              offset: Offset(0, -5),
+              offset: const Offset(0, -5),
             ),
           ],
           borderRadius: BorderRadius.only(
@@ -69,7 +71,7 @@ class _BottomNavControllerState extends State<BottomNavController> {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.deep_orange.withOpacity(0.1)
+              ? AppColors.deepOrange.withAlpha(25)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
@@ -79,7 +81,7 @@ class _BottomNavControllerState extends State<BottomNavController> {
             Icon(
               icon,
               size: 24.sp,
-              color: isSelected ? AppColors.deep_orange : Colors.grey[600],
+              color: isSelected ? AppColors.deepOrange : Colors.grey[600],
             ),
             SizedBox(height: 4.h),
             Text(
@@ -87,7 +89,7 @@ class _BottomNavControllerState extends State<BottomNavController> {
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppColors.deep_orange : Colors.grey[600],
+                color: isSelected ? AppColors.deepOrange : Colors.grey[600],
               ),
             ),
           ],

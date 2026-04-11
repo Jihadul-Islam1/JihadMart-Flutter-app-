@@ -1,13 +1,13 @@
 // Affiliate / Referral Program Service
 class AffiliateService {
-  static String _referralCode = 'JIHAD2024';
-  static double _totalEarnings = 2500.0;
-  static double _pendingEarnings = 750.0;
+  static final String _referralCode = 'JIHAD2024';
+  static final double _totalEarnings = 2500.0;
+  static final double _pendingEarnings = 750.0;
   static double _withdrawableBalance = 1750.0;
-  static int _totalReferrals = 12;
-  static int _activeReferrals = 8;
+  static final int _totalReferrals = 12;
+  static final int _activeReferrals = 8;
 
-  static List<Map<String, dynamic>> _referralHistory = [
+  static final List<Map<String, dynamic>> _referralHistory = [
     {
       'name': 'Rahim Mia',
       'email': 'rahim@email.com',
@@ -46,7 +46,7 @@ class AffiliateService {
     },
   ];
 
-  static List<Map<String, dynamic>> _commissionRates = [
+  static final List<Map<String, dynamic>> _commissionRates = [
     {'category': 'Electronics', 'rate': 5.0},
     {'category': 'Fashion', 'rate': 10.0},
     {'category': 'Beauty', 'rate': 12.0},
@@ -55,7 +55,7 @@ class AffiliateService {
     {'category': 'Others', 'rate': 6.0},
   ];
 
-  static List<Map<String, dynamic>> _withdrawHistory = [
+  static final List<Map<String, dynamic>> _withdrawHistory = [
     {
       'amount': 1000.0,
       'method': 'bKash',
@@ -116,11 +116,11 @@ class AffiliateService {
 
 // Influencer Program Service
 class InfluencerService {
-  static String _tier = 'Silver'; // Bronze, Silver, Gold, Platinum, Diamond
-  static int _followers = 5000;
-  static double _monthlyCommission = 15000.0;
+  static final String _tier = 'Silver'; // Bronze, Silver, Gold, Platinum, Diamond
+  static final int _followers = 5000;
+  static final double _monthlyCommission = 15000.0;
 
-  static List<Map<String, dynamic>> _tiers = [
+  static final List<Map<String, dynamic>> _tiers = [
     {
       'tier': 'Bronze',
       'minFollowers': 1000,
@@ -157,7 +157,7 @@ class InfluencerService {
     },
   ];
 
-  static List<Map<String, dynamic>> _campaigns = [
+  static final List<Map<String, dynamic>> _campaigns = [
     {
       'name': 'Summer Fashion Campaign',
       'budget': 50000.0,

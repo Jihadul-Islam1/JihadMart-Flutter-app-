@@ -1,15 +1,42 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
-import 'package:jihad/utils/order_service.dart';
+import 'package:jihad/const/app_colors.dart';
+import 'package:jihad/core/services/order_repository.dart';
 
 class OrderTrackingScreen extends StatelessWidget {
   const OrderTrackingScreen({super.key});
 
+  static final OrderRepository _orderRepository = OrderRepository();
+
+  /// Get image URL from both old and new order item formats
+  String _getItemImageUrl(Map<String, dynamic> item) {
+    // Try new format: single image field
+    if (item['image'] != null && item['image'].toString().isNotEmpty) {
+      final imageStr = item['image'].toString();
+      if (imageStr.startsWith('http')) {
+        return imageStr;
+      }
+    }
+
+    // Try old format: images array
+    final images = item['images'];
+    if (images is List && images.isNotEmpty) {
+      final firstImage = images[0].toString();
+      if (firstImage.startsWith('http')) {
+        return firstImage;
+      }
+      if (firstImage.isNotEmpty) {
+        return firstImage;
+      }
+    }
+
+    // Fallback to default asset
+    return 'assets/products/product1.jpg';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final orders = OrderService().orders;
-
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -29,8 +56,19 @@ class OrderTrackingScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: orders.isEmpty
-          ? Center(
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: _orderRepository.watchCurrentUserOrders(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(color: AppColors.deepOrange),
+            );
+          }
+
+          final orders = snapshot.data?.docs ?? [];
+
+          if (orders.isEmpty) {
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -55,27 +93,29 @@ class OrderTrackingScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            )
-          : ListView.builder(
-              padding: EdgeInsets.all(20.w),
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                final order =
-                    orders[orders.length - 1 - index]; // Show latest first
-                return _buildOrderTrackingCard(context, order, index);
-              },
-            ),
+            );
+          }
+
+          return ListView.builder(
+            padding: EdgeInsets.all(20.w),
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final order = orders[index].data();
+              return _buildOrderTrackingCard(context, order);
+            },
+          );
+        },
+      ),
     );
   }
 
   Widget _buildOrderTrackingCard(
     BuildContext context,
     Map<String, dynamic> order,
-    int index,
   ) {
-    // Simulate different tracking statuses based on order index
-    final List<Map<String, dynamic>> trackingSteps = _getTrackingSteps(index);
-    final int currentStep = _getCurrentStep(index);
+    final trackingSteps = _getTrackingSteps();
+    final currentStep = _getCurrentStep(order);
+    final items = (order['items'] as List<dynamic>? ?? []);
 
     return Container(
       margin: EdgeInsets.only(bottom: 20.h),
@@ -94,7 +134,6 @@ class OrderTrackingScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Order Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -102,8 +141,7 @@ class OrderTrackingScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    order['orderId'] ??
-                        'ORD-${DateTime.now().millisecondsSinceEpoch}',
+                    order['orderId'] ?? 'Order',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16.sp,
@@ -112,7 +150,7 @@ class OrderTrackingScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    order['date'] ?? 'Today',
+                    _formatOrderDate(order['createdAt']),
                     style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
                   ),
                 ],
@@ -134,19 +172,19 @@ class OrderTrackingScreen extends StatelessWidget {
               ),
             ],
           ),
-
           SizedBox(height: 20.h),
-
-          // Product Images
-          if (order['items'] != null && (order['items'] as List).isNotEmpty)
+          if (items.isNotEmpty)
             Container(
               height: 60.h,
               margin: EdgeInsets.only(bottom: 15.h),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: (order['items'] as List).length,
+                itemCount: items.length,
                 itemBuilder: (context, itemIndex) {
-                  var item = order['items'][itemIndex];
+                  final item = items[itemIndex] as Map<String, dynamic>;
+                  final imageUrl = _getItemImageUrl(item);
+                  final isNetworkImage = imageUrl.startsWith('http');
+                  
                   return Container(
                     margin: EdgeInsets.only(right: 10.w),
                     width: 60.w,
@@ -154,7 +192,9 @@ class OrderTrackingScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.shade200),
                       image: DecorationImage(
-                        image: AssetImage(item['image']),
+                        image: isNetworkImage
+                            ? NetworkImage(imageUrl)
+                            : AssetImage(imageUrl) as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -162,11 +202,8 @@ class OrderTrackingScreen extends StatelessWidget {
                 },
               ),
             ),
-
           Divider(color: Colors.grey[200]),
           SizedBox(height: 15.h),
-
-          // Tracking Timeline
           ...List.generate(trackingSteps.length, (stepIndex) {
             final step = trackingSteps[stepIndex];
             final isCompleted = stepIndex <= currentStep;
@@ -182,13 +219,13 @@ class OrderTrackingScreen extends StatelessWidget {
                       height: 24.w,
                       decoration: BoxDecoration(
                         color: isCompleted
-                            ? AppColors.deep_orange
+                            ? AppColors.deepOrange
                             : Colors.grey[300],
                         shape: BoxShape.circle,
                         boxShadow: isActive
                             ? [
                                 BoxShadow(
-                                  color: AppColors.deep_orange.withOpacity(0.3),
+                                  color: AppColors.deepOrange.withOpacity(0.3),
                                   blurRadius: 8,
                                   spreadRadius: 2,
                                 ),
@@ -206,7 +243,7 @@ class OrderTrackingScreen extends StatelessWidget {
                         width: 2,
                         height: 40.h,
                         color: isCompleted
-                            ? AppColors.deep_orange
+                            ? AppColors.deepOrange
                             : Colors.grey[300],
                       ),
                   ],
@@ -240,16 +277,6 @@ class OrderTrackingScreen extends StatelessWidget {
                             color: Colors.grey[600],
                           ),
                         ),
-                        if (isCompleted && step['time'] != null) ...[
-                          SizedBox(height: 4.h),
-                          Text(
-                            step['time'],
-                            style: TextStyle(
-                              fontSize: 11.sp,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        ],
                       ],
                     ),
                   ),
@@ -257,12 +284,9 @@ class OrderTrackingScreen extends StatelessWidget {
               ],
             );
           }),
-
           SizedBox(height: 15.h),
           Divider(color: Colors.grey[200]),
           SizedBox(height: 10.h),
-
-          // Delivery Info
           Row(
             children: [
               Icon(
@@ -273,7 +297,7 @@ class OrderTrackingScreen extends StatelessWidget {
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
-                  order['address'] ?? 'Delivery address',
+                  order['shippingAddress'] ?? 'Delivery address',
                   style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -291,7 +315,7 @@ class OrderTrackingScreen extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
               Text(
-                '${order['paymentMethod'] ?? 'Payment'} • ৳${order['total'] ?? '0'}',
+                '${order['paymentMethod'] ?? 'Payment'} • ৳${order['totalAmount'] ?? '0'}',
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
               ),
             ],
@@ -301,42 +325,48 @@ class OrderTrackingScreen extends StatelessWidget {
     );
   }
 
-  List<Map<String, dynamic>> _getTrackingSteps(int orderIndex) {
+  List<Map<String, dynamic>> _getTrackingSteps() {
     return [
       {
         'title': 'Order Placed',
         'description': 'Your order has been placed successfully',
-        'time': 'Today, 10:30 AM',
       },
       {
         'title': 'Order Confirmed',
         'description': 'Seller has confirmed your order',
-        'time': 'Today, 10:45 AM',
       },
       {
         'title': 'Shipped',
         'description': 'Your order is on the way',
-        'time': orderIndex > 0 ? 'Today, 2:00 PM' : null,
       },
       {
         'title': 'Out for Delivery',
         'description': 'Order will reach you soon',
-        'time': orderIndex > 1 ? 'Today, 5:30 PM' : null,
       },
       {
         'title': 'Delivered',
         'description': 'Order has been delivered',
-        'time': orderIndex > 2 ? 'Today, 6:15 PM' : null,
       },
     ];
   }
 
-  int _getCurrentStep(int orderIndex) {
-    // Simulate different progress based on order position
-    if (orderIndex == 0) return 1; // Latest order - just confirmed
-    if (orderIndex == 1) return 2; // Second order - shipped
-    if (orderIndex == 2) return 3; // Third order - out for delivery
-    return 4; // Older orders - delivered
+  int _getCurrentStep(Map<String, dynamic> order) {
+    final status = (order['status'] as String? ?? 'processing').toLowerCase();
+    switch (status) {
+      case 'placed':
+      case 'processing':
+        return 0;
+      case 'confirmed':
+        return 1;
+      case 'shipped':
+        return 2;
+      case 'out for delivery':
+        return 3;
+      case 'delivered':
+        return 4;
+      default:
+        return 0;
+    }
   }
 
   String _getStatusText(int step) {
@@ -369,5 +399,14 @@ class OrderTrackingScreen extends StatelessWidget {
       default:
         return Colors.grey;
     }
+  }
+
+  String _formatOrderDate(dynamic createdAt) {
+    if (createdAt is Timestamp) {
+      final date = createdAt.toDate();
+      return '${date.day}/${date.month}/${date.year}';
+    }
+
+    return 'Today';
   }
 }

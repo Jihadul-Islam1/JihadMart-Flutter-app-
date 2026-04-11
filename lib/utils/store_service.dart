@@ -1,6 +1,6 @@
 // Store Locator / Pickup Service
 class StoreLocatorService {
-  static List<Map<String, dynamic>> _stores = [
+  static final List<Map<String, dynamic>> _stores = [
     {
       'id': 'store1',
       'name': 'Jihad Store - Gulshan',
@@ -71,7 +71,7 @@ class StoreLocatorService {
     },
   ];
 
-  static List<Map<String, dynamic>> _pickupOrders = [
+  static final List<Map<String, dynamic>> _pickupOrders = [
     {
       'id': 'pickup1',
       'orderId': 'ORD-2024-001',
@@ -126,7 +126,7 @@ class StoreLocatorService {
 
 // QR Code / Barcode Scanner Service
 class ScannerService {
-  static List<Map<String, dynamic>> _scanHistory = [
+  static final List<Map<String, dynamic>> _scanHistory = [
     {
       'id': 'scan1',
       'type': 'product',

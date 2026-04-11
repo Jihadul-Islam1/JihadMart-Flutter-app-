@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jihad/utils/language_helper.dart';
 import 'dart:io';
 
 class ImageSearchScreen extends StatefulWidget {
-  const ImageSearchScreen({Key? key}) : super(key: key);
+  const ImageSearchScreen({super.key});
 
   @override
   _ImageSearchScreenState createState() => _ImageSearchScreenState();
@@ -88,7 +88,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen> {
       body: Stack(
         children: [
           // Camera View / Image Preview
-          Container(
+          SizedBox(
             height: double.infinity,
             width: double.infinity,
             child: _image != null
@@ -236,7 +236,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen> {
                                           Text(
                                             "৳${product['price']}",
                                             style: TextStyle(
-                                              color: AppColors.deep_orange,
+                                              color: AppColors.deepOrange,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -309,7 +309,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: AppColors.deep_orange),
+                    CircularProgressIndicator(color: AppColors.deepOrange),
                     SizedBox(height: 20.h),
                     Text(
                       _isBangla

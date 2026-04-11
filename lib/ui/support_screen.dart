@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 
 class SupportScreen extends StatelessWidget {
+  const SupportScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +48,7 @@ class SupportScreen extends StatelessWidget {
                   Icon(
                     Icons.headset_mic,
                     size: 60.sp,
-                    color: AppColors.deep_orange,
+                    color: AppColors.deepOrange,
                   ),
                   SizedBox(height: 20.h),
                   Text(
@@ -100,7 +102,7 @@ class SupportScreen extends StatelessWidget {
               color: Colors.white,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppColors.deep_orange),
+            child: Icon(icon, color: AppColors.deepOrange),
           ),
           SizedBox(width: 15.w),
           Column(

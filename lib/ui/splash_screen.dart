@@ -1,11 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jihad/core/config/app_config.dart';
 import 'package:jihad/ui/login_screen.dart';
-import 'package:jihad/ui/bottom_nav_controller.dart';
-import 'package:jihad/ui/admin/admin_dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -15,6 +17,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
+  bool _startupStarted = false;
 
   @override
   void initState() {
@@ -36,45 +39,49 @@ class _SplashScreenState extends State<SplashScreen>
     // Continuous blinking with scale effect
     _animationController.repeat(reverse: true);
 
-    // Navigate after 3 seconds
-    Future.delayed(Duration(seconds: 3), () async {
-      if (!mounted) return;
-      try {
-        User? user = FirebaseAuth.instance.currentUser;
-
-        if (user != null) {
-          // Check if session is valid by reloading user data
-          try {
-            await user.reload();
-            user = FirebaseAuth.instance.currentUser; // Refresh user object
-          } catch (e) {
-            // If reload fails (e.g. user deleted/disabled), force logout
-            await FirebaseAuth.instance.signOut();
-            throw Exception("Invalid Session");
-          }
-
-          if (user?.email == "admin@gmail.com") {
-            Navigator.pushReplacement(
-              context,
-              CupertinoPageRoute(builder: (_) => AdminDashboard()),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              CupertinoPageRoute(builder: (_) => BottomNavController()),
-            );
-          }
-        } else {
-          throw Exception("User not found");
-        }
-      } catch (e) {
-        // If any error occurs or user not found, go to Login
-        Navigator.pushReplacement(
-          context,
-          CupertinoPageRoute(builder: (_) => LoginScreen()),
-        );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_startupStarted) {
+        return;
       }
+      _startupStarted = true;
+      _initializeAndNavigate();
     });
+  }
+
+  Future<void> _initializeAndNavigate() async {
+    await AppConfig.load();
+    debugPrint(
+      'AppConfig loaded: IMGBB key present = ${AppConfig.imgbbApiKey.isNotEmpty}',
+    );
+
+    try {
+      if (kIsWeb) {
+        await Firebase.initializeApp(
+          options: const FirebaseOptions(
+            apiKey: "AIzaSyAQC9d7XEDX0yS7MhBRNgal3I8AUN0GVgU",
+            authDomain: "jihad-ecommerce.firebaseapp.com",
+            projectId: "jihad-ecommerce",
+            storageBucket: "jihad-ecommerce.firebasestorage.app",
+            messagingSenderId: "152901593043",
+            appId: "1:152901593043:web:debfea2337ef40d95d3126",
+            measurementId: "G-R1343P5P9H",
+          ),
+        );
+      } else {
+        await Firebase.initializeApp();
+      }
+    } catch (e, st) {
+      debugPrint('Firebase initialization failed: $e');
+      debugPrint('$st');
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(builder: (_) => const LoginScreen()),
+    );
   }
 
   @override
@@ -99,14 +106,13 @@ class _SplashScreenState extends State<SplashScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo
-                    Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/logo/logo1.png'),
-                          fit: BoxFit.contain,
-                        ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(26),
+                      child: Image.asset(
+                        'assets/logo/JihadMartlogo.png',
+                        width: 270,
+                        height: 270,
+                        fit: BoxFit.contain,
                       ),
                     ),
                     SizedBox(height: 20),

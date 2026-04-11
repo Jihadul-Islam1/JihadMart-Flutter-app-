@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/utils/price_alert_service.dart';
 
 class PriceAlertScreen extends StatefulWidget {
@@ -49,9 +49,9 @@ class _PriceAlertScreenState extends State<PriceAlertScreen>
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.deep_orange,
+          labelColor: AppColors.deepOrange,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: AppColors.deep_orange,
+          indicatorColor: AppColors.deepOrange,
           tabs: [
             Tab(text: "Active (${PriceAlertService.getAlertCount()})"),
             Tab(text: "Triggered (${PriceAlertService.getTriggeredCount()})"),
@@ -120,7 +120,7 @@ class _PriceAlertScreenState extends State<PriceAlertScreen>
         border: isTriggered ? Border.all(color: Colors.green, width: 2) : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             spreadRadius: 1,
           ),
@@ -225,7 +225,7 @@ class _PriceAlertScreenState extends State<PriceAlertScreen>
                       Text(
                         "Target: ৳${targetPrice.toStringAsFixed(0)}",
                         style: TextStyle(
-                          color: AppColors.deep_orange,
+                          color: AppColors.deepOrange,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -258,7 +258,7 @@ class _PriceAlertScreenState extends State<PriceAlertScreen>
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.deep_orange,
+                      backgroundColor: AppColors.deepOrange,
                       padding: EdgeInsets.symmetric(
                         horizontal: 15.w,
                         vertical: 8.h,

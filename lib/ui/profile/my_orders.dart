@@ -1,18 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
-import 'package:jihad/utils/order_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jihad/const/app_colors.dart';
+import 'package:jihad/core/services/order_repository.dart';
+import 'package:jihad/features/shared/presentation/screens/order_details_screen.dart';
 
 class MyOrders extends StatefulWidget {
+  const MyOrders({super.key});
+
   @override
   _MyOrdersState createState() => _MyOrdersState();
 }
 
 class _MyOrdersState extends State<MyOrders> {
+  final OrderRepository _orderRepository = OrderRepository();
+
+  /// Get image URL from both old and new order item formats
+  String _getItemImageUrl(Map<String, dynamic> item) {
+    // Try new format: single image field
+    if (item['image'] != null && item['image'].toString().isNotEmpty) {
+      final imageStr = item['image'].toString();
+      if (imageStr.startsWith('http')) {
+        return imageStr;
+      }
+    }
+
+    // Try old format: images array
+    final images = item['images'];
+    if (images is List && images.isNotEmpty) {
+      final firstImage = images[0].toString();
+      if (firstImage.startsWith('http')) {
+        return firstImage;
+      }
+      if (firstImage.isNotEmpty) {
+        return firstImage;
+      }
+    }
+
+    // Fallback to default asset
+    return 'assets/products/product1.jpg';
+  }
+
+  Future<void> _requestRefund(String orderId) async {
+    final controller = TextEditingController();
+
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Request Refund'),
+        content: TextField(
+          controller: controller,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            hintText: 'Why do you want a refund?',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final value = controller.text.trim();
+              Navigator.pop(dialogContext, value.isEmpty ? '-' : value);
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      ),
+    );
+
+    controller.dispose();
+    if (reason == null) {
+      return;
+    }
+
+    try {
+      await _orderRepository.requestRefund(orderId: orderId, reason: reason);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Refund request submitted')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Refund request failed: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final orders = OrderService().orders;
-
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -32,8 +112,19 @@ class _MyOrdersState extends State<MyOrders> {
         ),
         centerTitle: true,
       ),
-      body: orders.isEmpty
-          ? Center(
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: _orderRepository.watchCurrentUserOrders(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(color: AppColors.deepOrange),
+            );
+          }
+
+          final orders = snapshot.data?.docs ?? [];
+
+          if (orders.isEmpty) {
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -54,13 +145,34 @@ class _MyOrdersState extends State<MyOrders> {
                   ),
                 ],
               ),
-            )
-          : ListView.builder(
-              padding: EdgeInsets.all(20.w),
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                final order = orders[index];
-                return Container(
+            );
+          }
+
+          return ListView.builder(
+            padding: EdgeInsets.all(20.w),
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final order = orders[index].data();
+              final items = (order['items'] as List<dynamic>? ?? []);
+              final status = (order['status'] ?? '').toString();
+              final refundStatus = order['refundStatus']?.toString();
+              final canRequestRefund =
+                  status.toLowerCase() == 'delivered' &&
+                  (refundStatus == null || refundStatus.isEmpty);
+
+              return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => OrderDetailsScreen(
+                          order: order,
+                          orderDocId: orders[index].id,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
                   margin: EdgeInsets.only(bottom: 20.h),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -85,14 +197,14 @@ class _MyOrdersState extends State<MyOrders> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  order['orderId'],
+                                    order['orderId'] ?? 'Order',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16.sp,
                                   ),
                                 ),
                                 Text(
-                                  order['date'],
+                                    _formatOrderDate(order['createdAt']),
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12.sp,
@@ -100,14 +212,13 @@ class _MyOrdersState extends State<MyOrders> {
                                 ),
                               ],
                             ),
-                            _buildStatusBadge(order['status']),
+                            _buildStatusBadge(status),
                           ],
                         ),
                       ),
                       Divider(height: 1),
                       // Product Images
-                      if (order['items'] != null &&
-                          (order['items'] as List).isNotEmpty)
+                      if (items.isNotEmpty)
                         Container(
                           height: 80.h,
                           padding: EdgeInsets.symmetric(
@@ -116,9 +227,12 @@ class _MyOrdersState extends State<MyOrders> {
                           ),
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: (order['items'] as List).length,
+                            itemCount: items.length,
                             itemBuilder: (context, itemIndex) {
-                              var item = order['items'][itemIndex];
+                              final item = items[itemIndex] as Map<String, dynamic>;
+                              final imageUrl = _getItemImageUrl(item);
+                              final isNetworkImage = imageUrl.startsWith('http');
+                              
                               return Container(
                                 margin: EdgeInsets.only(right: 10.w),
                                 width: 60.w,
@@ -128,7 +242,9 @@ class _MyOrdersState extends State<MyOrders> {
                                     color: Colors.grey.shade200,
                                   ),
                                   image: DecorationImage(
-                                    image: AssetImage(item['image']),
+                                    image: isNetworkImage
+                                        ? NetworkImage(imageUrl)
+                                        : AssetImage(imageUrl) as ImageProvider,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -147,12 +263,12 @@ class _MyOrdersState extends State<MyOrders> {
                           children: [
                             Icon(
                               Icons.payment,
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                               size: 20.sp,
                             ),
                             SizedBox(width: 10.w),
                             Text(
-                              "Payment: ${order['paymentMethod']}",
+                              "Payment: ${order['paymentMethod'] ?? 'Payment'}",
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: Colors.grey[600],
@@ -179,31 +295,62 @@ class _MyOrdersState extends State<MyOrders> {
                                   ),
                                 ),
                                 Text(
-                                  "৳${order['total']}",
+                                  "৳${order['totalAmount'] ?? order['total'] ?? 0}",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18.sp,
-                                    color: AppColors.deep_orange,
+                                    color: AppColors.deepOrange,
                                   ),
                                 ),
+                                if (refundStatus != null)
+                                  Text(
+                                    'Refund: $refundStatus',
+                                    style: TextStyle(
+                                      color: Colors.purple,
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                               ],
                             ),
-                            Text(
-                              "${order['items'].length} Items",
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                color: Colors.grey[600],
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "${items.length} Items",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                if (canRequestRefund)
+                                  TextButton(
+                                    onPressed: () =>
+                                        _requestRefund(orders[index].id),
+                                    child: const Text('Request Refund'),
+                                  ),
+                              ],
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                );
-              },
-            ),
+                ));
+            },
+          );
+        },
+      ),
     );
+  }
+
+  String _formatOrderDate(dynamic createdAt) {
+    if (createdAt is Timestamp) {
+      final date = createdAt.toDate();
+      return '${date.day}/${date.month}/${date.year}';
+    }
+
+    return 'Today';
   }
 
   Widget _buildStatusBadge(String status) {

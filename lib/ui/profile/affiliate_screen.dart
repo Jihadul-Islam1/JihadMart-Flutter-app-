@@ -555,7 +555,7 @@ class _AffiliateScreenState extends State<AffiliateScreen>
               ),
               SizedBox(height: 16.h),
               DropdownButtonFormField<String>(
-                value: selectedMethod,
+                initialValue: selectedMethod,
                 decoration: InputDecoration(
                   labelText: 'মেথড',
                   border: OutlineInputBorder(

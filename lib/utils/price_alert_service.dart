@@ -1,6 +1,6 @@
 class PriceAlertService {
-  static List<Map<String, dynamic>> _priceAlerts = [];
-  static List<Map<String, dynamic>> _triggeredAlerts = [];
+  static final List<Map<String, dynamic>> _priceAlerts = [];
+  static final List<Map<String, dynamic>> _triggeredAlerts = [];
 
   static List<Map<String, dynamic>> getPriceAlerts() => _priceAlerts;
   static List<Map<String, dynamic>> getTriggeredAlerts() => _triggeredAlerts;

@@ -1,0 +1,136 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function authEmail() {
+      return request.auth.token.email;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && (
+          request.auth.token.admin == true
+          || authEmail() in ['admin@gmail.com']
+        );
+    }
+
+    function isSelfEmail(email) {
+      return isSignedIn() && authEmail() == email;
+    }
+
+    function userDoc(email) {
+      return get(/databases/$(database)/documents/users-form-data/$(email));
+    }
+
+    function isVendor() {
+      return isSignedIn() && userDoc(authEmail()).data.role in ['vendor', 'seller'];
+    }
+
+    function isStoreOwner(storeId) {
+      return isSignedIn()
+        && isVendor()
+        && userDoc(authEmail()).data.storeId == storeId;
+    }
+
+    function orderContainsVendorStore(storeIds) {
+      return isSignedIn()
+        && isVendor()
+        && storeIds is list
+        && userDoc(authEmail()).data.storeId in storeIds;
+    }
+
+    match /users-form-data/{email} {
+      allow read: if isAdmin() || isSelfEmail(email);
+      allow create, update: if isAdmin() || isSelfEmail(email);
+      allow delete: if isAdmin();
+    }
+
+    match /stores/{storeId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin() || isStoreOwner(storeId);
+      allow delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAdmin() || isStoreOwner(request.resource.data.storeId);
+      allow update: if isAdmin() || isStoreOwner(resource.data.storeId);
+      allow delete: if isAdmin() || isStoreOwner(resource.data.storeId);
+
+      match /reviews/{reviewId} {
+        allow read: if true;
+
+        allow create: if isSignedIn()
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.userName is string
+          && request.resource.data.comment is string
+          && request.resource.data.comment.size() > 0
+          && request.resource.data.comment.size() <= 1000
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5;
+
+        allow update, delete: if isAdmin()
+          || (isSignedIn() && resource.data.uid == request.auth.uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.userEmail == authEmail())
+        || isVendor();
+
+      allow create: if isSignedIn()
+        && request.resource.data.userEmail == authEmail();
+
+      allow update: if isAdmin()
+        || (isSignedIn() && resource.data.userEmail == authEmail())
+        || orderContainsVendorStore(resource.data.storeIds);
+
+      allow delete: if isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userEmail == authEmail());
+      allow create: if isSignedIn();
+      allow update: if isAdmin() || (isSignedIn() && resource.data.userEmail == authEmail());
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.userEmail == authEmail());
+    }
+
+    match /vendor-requests/{requestId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.email == authEmail());
+      allow create: if isSignedIn() && request.resource.data.email == authEmail();
+      allow update, delete: if isAdmin();
+    }
+
+    match /users-favourite-items/{docId} {
+      allow read, write: if isAdmin() || (isSignedIn() && docId == authEmail());
+    }
+
+    match /subscriptions/{subId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /payouts/{payoutId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.paidTo == authEmail())
+        || (isSignedIn() && resource.data.storeId == userDoc(authEmail()).data.storeId);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /audit-logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn() && request.resource.data.actorEmail == authEmail();
+      allow update, delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

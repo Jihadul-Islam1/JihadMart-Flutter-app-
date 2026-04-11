@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 
 class ShippingAddress extends StatefulWidget {
+  const ShippingAddress({super.key});
+
   @override
   _ShippingAddressState createState() => _ShippingAddressState();
 }
@@ -90,7 +92,7 @@ class _ShippingAddressState extends State<ShippingAddress> {
                     value: _selectedDivision,
                     hint: Row(
                       children: [
-                        Icon(Icons.map, color: AppColors.deep_orange),
+                        Icon(Icons.map, color: AppColors.deepOrange),
                         SizedBox(width: 10),
                         Text("Select Division"),
                       ],
@@ -126,7 +128,7 @@ class _ShippingAddressState extends State<ShippingAddress> {
                     value: _selectedDistrict,
                     hint: Row(
                       children: [
-                        Icon(Icons.location_city, color: AppColors.deep_orange),
+                        Icon(Icons.location_city, color: AppColors.deepOrange),
                         SizedBox(width: 10),
                         Text("Select District"),
                       ],
@@ -190,6 +192,13 @@ class _ShippingAddressState extends State<ShippingAddress> {
                       );
                     }
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.deepOrange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    elevation: 5,
+                  ),
                   child: Text(
                     "Save Address",
                     style: TextStyle(
@@ -197,13 +206,6 @@ class _ShippingAddressState extends State<ShippingAddress> {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deep_orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 5,
                   ),
                 ),
               ),
@@ -243,7 +245,7 @@ class _ShippingAddressState extends State<ShippingAddress> {
         },
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppColors.deep_orange),
+          prefixIcon: Icon(icon, color: AppColors.deepOrange),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none,

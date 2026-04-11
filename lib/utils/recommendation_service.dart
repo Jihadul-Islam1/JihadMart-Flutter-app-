@@ -1,6 +1,6 @@
 // Personalization / Recommendation Service
 class RecommendationService {
-  static List<Map<String, dynamic>> _forYouProducts = [
+  static final List<Map<String, dynamic>> _forYouProducts = [
     {
       'id': 'rec1',
       'name': 'Recommended Earbuds',
@@ -27,7 +27,7 @@ class RecommendationService {
     },
   ];
 
-  static List<Map<String, dynamic>> _frequentlyBoughtTogether = [
+  static final List<Map<String, dynamic>> _frequentlyBoughtTogether = [
     {
       'products': [
         {
@@ -52,7 +52,7 @@ class RecommendationService {
     },
   ];
 
-  static List<Map<String, dynamic>> _trendingProducts = [
+  static final List<Map<String, dynamic>> _trendingProducts = [
     {
       'id': 'trend1',
       'name': 'Viral Product',
@@ -119,7 +119,7 @@ class SearchHistoryService {
     'পাওয়ার ব্যাংক',
   ];
 
-  static List<String> _popularSearches = [
+  static final List<String> _popularSearches = [
     'iPhone 15',
     'Samsung Galaxy',
     'Wireless Earbuds',
@@ -130,7 +130,7 @@ class SearchHistoryService {
     'Gaming Mouse',
   ];
 
-  static List<String> _trendingSearches = [
+  static final List<String> _trendingSearches = [
     'Summer Sale 🔥',
     'Back to School 📚',
     'Eid Collection 🌙',
@@ -197,7 +197,7 @@ class FilterPreferencesService {
     'discount': false,
   };
 
-  static List<Map<String, dynamic>> _savedSearches = [
+  static final List<Map<String, dynamic>> _savedSearches = [
     {
       'id': 'saved1',
       'name': 'Budget Electronics',

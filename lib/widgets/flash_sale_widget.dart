@@ -7,7 +7,7 @@ class FlashSaleWidget extends StatefulWidget {
   final List<Map<String, dynamic>> products;
   final Function(Map<String, dynamic>)? onProductTap;
 
-  FlashSaleWidget({
+  const FlashSaleWidget({super.key, 
     required this.endTime,
     required this.products,
     this.onProductTap,

@@ -1,6 +1,6 @@
 // Chat Support / Customer Service
 class ChatSupportService {
-  static List<Map<String, dynamic>> _conversations = [
+  static final List<Map<String, dynamic>> _conversations = [
     {
       'id': 'conv1',
       'subject': 'Order Delivery Issue',
@@ -19,7 +19,7 @@ class ChatSupportService {
     },
   ];
 
-  static List<Map<String, dynamic>> _messages = [
+  static final List<Map<String, dynamic>> _messages = [
     {
       'id': 'msg1',
       'conversationId': 'conv2',
@@ -37,7 +37,7 @@ class ChatSupportService {
     },
   ];
 
-  static List<Map<String, dynamic>> _quickReplies = [
+  static final List<Map<String, dynamic>> _quickReplies = [
     {'text': 'Track my order', 'action': 'track_order'},
     {'text': 'Return/Refund', 'action': 'return'},
     {'text': 'Payment Issue', 'action': 'payment'},
@@ -87,7 +87,7 @@ class ChatSupportService {
 
 // FAQ / Help Center Service
 class HelpCenterService {
-  static List<Map<String, dynamic>> _categories = [
+  static final List<Map<String, dynamic>> _categories = [
     {'id': 'orders', 'name': 'Orders & Delivery', 'icon': '📦', 'articles': 12},
     {
       'id': 'payments',
@@ -121,7 +121,7 @@ class HelpCenterService {
     },
   ];
 
-  static List<Map<String, dynamic>> _faqs = [
+  static final List<Map<String, dynamic>> _faqs = [
     {
       'id': 'faq1',
       'category': 'orders',
@@ -207,7 +207,7 @@ class HelpCenterService {
 
 // Feedback / Rating Service
 class FeedbackService {
-  static List<Map<String, dynamic>> _pendingFeedback = [
+  static final List<Map<String, dynamic>> _pendingFeedback = [
     {
       'id': 'fb1',
       'orderId': 'ORD-2024-001',
@@ -217,7 +217,7 @@ class FeedbackService {
     },
   ];
 
-  static List<Map<String, dynamic>> _submittedFeedback = [
+  static final List<Map<String, dynamic>> _submittedFeedback = [
     {
       'id': 'sfb1',
       'orderId': 'ORD-2024-002',

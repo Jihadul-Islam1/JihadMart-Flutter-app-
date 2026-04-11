@@ -3,171 +3,203 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jihad/const/AppColors.dart';
-import 'package:jihad/ui/admin/admin_dashboard.dart';
-import 'package:jihad/widgets/customButton.dart';
+import 'package:jihad/const/app_colors.dart';
+import 'package:jihad/core/services/user_role_service.dart';
+import 'package:jihad/features/shared/presentation/screens/role_gate_screen.dart';
+import 'package:jihad/ui/vendor/vendor_login_screen.dart';
 
 class AdminLoginScreen extends StatefulWidget {
+  const AdminLoginScreen({super.key});
+
   @override
-  _AdminLoginScreenState createState() => _AdminLoginScreenState();
+  AdminLoginScreenState createState() => AdminLoginScreenState();
 }
 
-class _AdminLoginScreenState extends State<AdminLoginScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+class AdminLoginScreenState extends State<AdminLoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
   bool _isLoading = false;
 
-  signInAdmin() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+  Future<void> signInAdmin() async {
+    final email = _emailController.text.trim().toLowerCase();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
       Fluttertoast.showToast(msg: "Please fill all fields");
       return;
     }
 
-    // Hardcoded check for Admin
-    if (_emailController.text.trim().toLowerCase() == "admin@gmail.com" &&
-        _passwordController.text.trim() == "admin1") {
-      setState(() {
-        _isLoading = true;
-      });
+    setState(() {
+      _isLoading = true;
+    });
 
-      try {
-        // Authenticate with Firebase to ensure we have a valid user session
-        // We use the specific admin credentials
-        try {
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: "admin@gmail.com",
-            password: "admin1",
-          );
-        } on FirebaseAuthException catch (e) {
-          if (e.code == 'user-not-found') {
-            // Create if not exists
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-              email: "admin@gmail.com",
-              password: "admin1",
-            );
-          } else {
-            // If wrong password for existing account or other error
-            Fluttertoast.showToast(msg: "Firebase Auth Error: ${e.message}");
-            // We might still want to allow access if it's just a password mismatch on firebase
-            // but correct hardcoded pass? No, let's keep it synced.
-            setState(() {
-              _isLoading = false;
-            });
-            return;
-          }
-        }
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-        Fluttertoast.showToast(msg: "Welcome Admin!");
-        Navigator.pushAndRemoveUntil(
-          context,
-          CupertinoPageRoute(builder: (_) => AdminDashboard()),
-          (route) => false,
-        );
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Something went wrong: $e");
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+      final role = await UserRoleService.resolveCurrentRole();
+      if (role != AppRole.admin) {
+        await FirebaseAuth.instance.signOut();
+        Fluttertoast.showToast(msg: "This account is not an admin account");
+        return;
       }
-    } else {
-      Fluttertoast.showToast(msg: "Invalid Admin Credentials");
+
+      if (!mounted) return;
+      Fluttertoast.showToast(msg: "Welcome Admin!");
+      Navigator.pushAndRemoveUntil(
+        context,
+        CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
+        (route) => false,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        Fluttertoast.showToast(msg: "No user found for that email");
+      } else if (e.code == 'wrong-password') {
+        Fluttertoast.showToast(msg: "Wrong password provided");
+      } else {
+        Fluttertoast.showToast(msg: "Error: ${e.message}");
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Something went wrong: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.deep_orange,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 100.h),
-            Text(
-              "Admin Panel",
-              style: TextStyle(
-                fontSize: 30.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Expanded(
-              child: Container(
-                width: ScreenUtil().screenWidth,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(28.r),
-                    topRight: Radius.circular(28.r),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF1F2430), Color(0xFF10131A)],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 20.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                ),
+                SizedBox(height: 12.h),
+                Text(
+                  'Admin Access',
+                  style: TextStyle(
+                    fontSize: 30.sp,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
                   ),
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(20.w),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 20.h),
-                        Text(
-                          "Admin Login",
-                          style: TextStyle(
-                            fontSize: 22.sp,
-                            color: AppColors.deep_orange,
+                SizedBox(height: 8.h),
+                Text(
+                  'Login with an account that has admin role or admin claim.',
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: Colors.white70,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(18.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22.r),
+                  ),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Admin Email',
+                          prefixIcon: Icon(Icons.alternate_email_outlined),
+                        ),
+                      ),
+                      SizedBox(height: 14.h),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: _obscureText,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText ? Icons.visibility_off : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
                           ),
                         ),
-                        SizedBox(height: 20.h),
-
-                        // Email Field
-                        TextField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            hintText: "admin@gmail.com",
-                            prefixIcon: Icon(Icons.email_outlined),
-                          ),
-                        ),
-                        SizedBox(height: 10.h),
-
-                        // Password Field
-                        TextField(
-                          controller: _passwordController,
-                          obscureText: _obscureText,
-                          decoration: InputDecoration(
-                            hintText: "admin1",
-                            prefixIcon: Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureText
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureText = !_obscureText;
-                                });
-                              },
+                      ),
+                      SizedBox(height: 20.h),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _isLoading ? null : signInAdmin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.deepOrange,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.r),
                             ),
                           ),
+                          icon: _isLoading
+                              ? SizedBox(
+                                  width: 18.w,
+                                  height: 18.w,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Icon(Icons.admin_panel_settings_outlined),
+                          label: Text(_isLoading ? 'Signing in...' : 'Login as Admin'),
                         ),
-
-                        SizedBox(height: 40.h),
-
-                        _isLoading
-                            ? Center(child: CircularProgressIndicator())
-                            : customButton(
-                                "Login as Admin",
-                                () => signInAdmin(),
-                              ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 10.h),
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (_) => const VendorLoginScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.storefront_outlined),
+                        label: const Text('Switch to Vendor Login'),
+                      ),
+                    ],
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

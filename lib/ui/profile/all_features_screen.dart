@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jihad/utils/app_features.dart';
 
 class AllFeaturesScreen extends StatefulWidget {
-  const AllFeaturesScreen({Key? key}) : super(key: key);
+  const AllFeaturesScreen({super.key});
 
   @override
   State<AllFeaturesScreen> createState() => _AllFeaturesScreenState();
@@ -53,8 +53,8 @@ class _AllFeaturesScreenState extends State<AllFeaturesScreen> {
                 borderRadius: BorderRadius.circular(20.r),
                 boxShadow: [
                   BoxShadow(
-                    color: (feature['gradient'] as List<Color>)[0].withValues(
-                      alpha: 0.3,
+                    color: (feature['gradient'] as List<Color>)[0].withOpacity(
+                      0.3,
                     ),
                     blurRadius: 8,
                     offset: Offset(0, 4),
@@ -82,9 +82,9 @@ class _AllFeaturesScreenState extends State<AllFeaturesScreen> {
                         colors: feature['image'] != null
                             ? [
                                 (feature['gradient'] as List<Color>)[0]
-                                    .withValues(alpha: 0.85),
+                                    .withOpacity(0.85),
                                 (feature['gradient'] as List<Color>)[1]
-                                    .withValues(alpha: 0.85),
+                                    .withOpacity(0.85),
                               ]
                             : feature['gradient'] as List<Color>,
                         begin: Alignment.topLeft,
@@ -100,7 +100,7 @@ class _AllFeaturesScreenState extends State<AllFeaturesScreen> {
                       Container(
                         padding: EdgeInsets.all(12.w),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: Colors.white.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -123,7 +123,7 @@ class _AllFeaturesScreenState extends State<AllFeaturesScreen> {
                       Text(
                         feature['subtitle'] as String,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: Colors.white.withOpacity(0.9),
                           fontSize: 12.sp,
                         ),
                         textAlign: TextAlign.center,

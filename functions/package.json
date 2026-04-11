@@ -1,0 +1,19 @@
+{
+  "name": "jihad-functions",
+  "description": "Firebase Cloud Functions for admin role management",
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "node index.js",
+    "deploy": "firebase deploy --only functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.6.0",
+    "firebase-functions": "^6.0.1"
+  },
+  "private": true
+}

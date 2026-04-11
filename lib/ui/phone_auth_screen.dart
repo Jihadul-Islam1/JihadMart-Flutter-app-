@@ -3,19 +3,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jihad/const/AppColors.dart';
-import 'package:jihad/ui/bottom_nav_controller.dart';
+import 'package:jihad/const/app_colors.dart';
+import 'package:jihad/features/shared/presentation/screens/role_gate_screen.dart';
 
 class PhoneAuthScreen extends StatefulWidget {
-  const PhoneAuthScreen({Key? key}) : super(key: key);
+  const PhoneAuthScreen({super.key});
 
   @override
   _PhoneAuthScreenState createState() => _PhoneAuthScreenState();
 }
 
 class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _otpController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
   bool _isLoading = false;
   bool _isOTPSent = false;
   String? _verificationId;
@@ -39,7 +39,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
           Fluttertoast.showToast(msg: "Login Successful!");
           Navigator.pushAndRemoveUntil(
             context,
-            CupertinoPageRoute(builder: (_) => BottomNavController()),
+            CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
             (route) => false,
           );
         },
@@ -91,7 +91,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       Fluttertoast.showToast(msg: "Login Successful!");
       Navigator.pushAndRemoveUntil(
         context,
-        CupertinoPageRoute(builder: (_) => BottomNavController()),
+        CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
         (route) => false,
       );
     } catch (e) {
@@ -105,7 +105,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.deep_orange,
+      backgroundColor: AppColors.deepOrange,
       body: SafeArea(
         child: Column(
           children: [
@@ -149,7 +149,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                         _isOTPSent ? "Enter OTP" : "Enter Phone Number",
                         style: TextStyle(
                           fontSize: 20.sp,
-                          color: AppColors.deep_orange,
+                          color: AppColors.deepOrange,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -172,7 +172,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                             labelText: "Phone Number",
                             prefixIcon: Icon(
                               Icons.phone,
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.r),
@@ -189,7 +189,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                             labelText: "OTP",
                             prefixIcon: Icon(
                               Icons.lock,
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.r),
@@ -207,7 +207,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                               ? null
                               : (_isOTPSent ? _verifyOTP : _sendOTP),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.deep_orange,
+                            backgroundColor: AppColors.deepOrange,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.r),
                             ),

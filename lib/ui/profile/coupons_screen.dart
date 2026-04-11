@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 
 class CouponsScreen extends StatelessWidget {
-  const CouponsScreen({Key? key}) : super(key: key);
+  const CouponsScreen({super.key});
 
   final List<Map<String, dynamic>> _coupons = const [
     {
@@ -74,7 +74,7 @@ class CouponsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: Colors.grey.withOpacity(0.1),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -90,7 +90,7 @@ class CouponsScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: coupon['isActive']
-                            ? [AppColors.deep_orange, Colors.orange]
+                            ? [AppColors.deepOrange, Colors.orange]
                             : [Colors.grey, Colors.grey.shade400],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -155,14 +155,14 @@ class CouponsScreen extends StatelessWidget {
                                     ),
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: AppColors.deep_orange,
+                                        color: AppColors.deepOrange,
                                       ),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     child: Text(
                                       "COPY",
                                       style: TextStyle(
-                                        color: AppColors.deep_orange,
+                                        color: AppColors.deepOrange,
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.bold,
                                       ),

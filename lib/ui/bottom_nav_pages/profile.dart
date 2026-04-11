@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/ui/admin/add_product_screen.dart';
 import 'package:jihad/ui/profile/my_orders.dart';
 import 'package:jihad/ui/profile/shipping_address.dart';
 import 'package:jihad/ui/profile/coupons_screen.dart';
@@ -22,6 +21,9 @@ import 'package:jihad/ui/product_compare_screen.dart';
 import 'package:jihad/ui/size_guide_screen.dart';
 import 'package:jihad/ui/support_screen.dart';
 import 'package:jihad/ui/login_screen.dart';
+import 'package:jihad/features/admin/presentation/screens/admin_panel_shell.dart';
+import 'package:jihad/features/shared/presentation/screens/role_debug_screen.dart';
+import 'package:jihad/features/vendor/presentation/screens/vendor_onboarding_screen.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -140,7 +142,7 @@ class _ProfileState extends State<Profile> {
       backgroundColor: Color(0xFFF5F5F5),
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(color: AppColors.deep_orange),
+              child: CircularProgressIndicator(color: AppColors.deepOrange),
             )
           : SingleChildScrollView(
               child: Column(
@@ -154,14 +156,14 @@ class _ProfileState extends State<Profile> {
                       right: 20.w,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.deep_orange,
+                      color: AppColors.deepOrange,
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(30),
                         bottomRight: Radius.circular(30),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.deep_orange.withValues(alpha: 0.3),
+                          color: AppColors.deepOrange.withOpacity(0.3),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -222,7 +224,7 @@ class _ProfileState extends State<Profile> {
                                   child: Icon(
                                     Icons.camera_alt,
                                     size: 20.sp,
-                                    color: AppColors.deep_orange,
+                                    color: AppColors.deepOrange,
                                   ),
                                 ),
                               ),
@@ -280,7 +282,7 @@ class _ProfileState extends State<Profile> {
                             child: ElevatedButton(
                               onPressed: _updateUserData,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.deep_orange,
+                                backgroundColor: AppColors.deepOrange,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15),
                                 ),
@@ -496,7 +498,31 @@ class _ProfileState extends State<Profile> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => AddProductScreen(),
+                                  builder: (_) => const AdminPanelShell(),
+                                ),
+                              );
+                            },
+                          ),
+                          _buildMenuTile(
+                            "Become a Seller",
+                            Icons.storefront_outlined,
+                            () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const VendorOnboardingScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _buildMenuTile(
+                            "Role Debug",
+                            Icons.bug_report_outlined,
+                            () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const RoleDebugScreen(),
                                 ),
                               );
                             },
@@ -545,7 +571,7 @@ class _ProfileState extends State<Profile> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             spreadRadius: 1,
           ),
@@ -555,7 +581,7 @@ class _ProfileState extends State<Profile> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppColors.deep_orange),
+          prefixIcon: Icon(icon, color: AppColors.deepOrange),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none,
@@ -576,7 +602,7 @@ class _ProfileState extends State<Profile> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             spreadRadius: 1,
           ),
@@ -587,10 +613,10 @@ class _ProfileState extends State<Profile> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.deep_orange.withOpacity(0.1),
+              color: AppColors.deepOrange.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppColors.deep_orange, size: 20.sp),
+            child: Icon(icon, color: AppColors.deepOrange, size: 20.sp),
           ),
           SizedBox(width: 15.w),
           Column(
@@ -623,7 +649,7 @@ class _ProfileState extends State<Profile> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             spreadRadius: 1,
           ),

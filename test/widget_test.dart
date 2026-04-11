@@ -6,13 +6,13 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jihad/main.dart';
+import 'package:jihad/app/ecommerce_app.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   testWidgets('App builds without errors', (tester) async {
-    await tester.pumpWidget(MyApp());
-    // App should include a MaterialApp from MyApp
+    await tester.pumpWidget(const EcommerceApp());
+    // App should include a MaterialApp from EcommerceApp
     expect(find.byType(MaterialApp), findsOneWidget);
     // Allow any startup timers/animations (e.g., SplashScreen timers) to complete
     await tester.pump(const Duration(seconds: 5));

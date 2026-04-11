@@ -1,6 +1,6 @@
 // Flash Sale / Time-Limited Deals Service
 class FlashSaleService {
-  static List<Map<String, dynamic>> _flashSales = [
+  static final List<Map<String, dynamic>> _flashSales = [
     {
       'id': 'flash1',
       'name': 'Mega Flash Sale 🔥',
@@ -53,7 +53,7 @@ class FlashSaleService {
     },
   ];
 
-  static List<Map<String, dynamic>> _upcomingFlashSales = [
+  static final List<Map<String, dynamic>> _upcomingFlashSales = [
     {
       'id': 'flash2',
       'name': 'Midnight Madness 🌙',
@@ -98,7 +98,7 @@ class FlashSaleService {
 
 // Coupon / Promo Code Service (Enhanced)
 class CouponService {
-  static List<Map<String, dynamic>> _availableCoupons = [
+  static final List<Map<String, dynamic>> _availableCoupons = [
     {
       'code': 'WELCOME50',
       'type': 'percentage',
@@ -161,7 +161,7 @@ class CouponService {
     },
   ];
 
-  static List<Map<String, dynamic>> _usedCoupons = [
+  static final List<Map<String, dynamic>> _usedCoupons = [
     {
       'code': 'NEWUSER25',
       'usedAt': DateTime.now().subtract(Duration(days: 10)),

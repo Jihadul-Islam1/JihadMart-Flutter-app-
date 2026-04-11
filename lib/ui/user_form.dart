@@ -1,24 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jihad/const/AppColors.dart';
-import 'package:jihad/ui/bottom_nav_controller.dart';
+import 'package:jihad/const/app_colors.dart';
+import 'package:jihad/features/customer/presentation/screens/customer_panel_shell.dart';
 import 'package:jihad/widgets/customButton.dart';
 import 'package:jihad/widgets/myTextField.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserForm extends StatefulWidget {
+  const UserForm({super.key});
+
   @override
   _UserFormState createState() => _UserFormState();
 }
 
 class _UserFormState extends State<UserForm> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _dobController = TextEditingController();
-  TextEditingController _genderController = TextEditingController();
-  TextEditingController _ageController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
   List<String> gender = ["Male", "Female", "Other"];
 
   Future<void> _selectDateFromPicker(BuildContext context) async {
@@ -28,20 +29,21 @@ class _UserFormState extends State<UserForm> {
       firstDate: DateTime(DateTime.now().year - 30),
       lastDate: DateTime(DateTime.now().year),
     );
-    if (picked != null)
+    if (picked != null) {
       setState(() {
         _dobController.text = "${picked.day}/ ${picked.month}/ ${picked.year}";
       });
+    }
   }
 
   sendUserDataToDB() async {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    var currentUser = _auth.currentUser;
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    var currentUser = auth.currentUser;
 
-    CollectionReference _collectionRef = FirebaseFirestore.instance.collection(
+    CollectionReference collectionRef = FirebaseFirestore.instance.collection(
       "users-form-data",
     );
-    return _collectionRef
+    return collectionRef
         .doc(currentUser!.email)
         .set({
           "name": _nameController.text,
@@ -54,7 +56,7 @@ class _UserFormState extends State<UserForm> {
         .then(
           (value) => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => BottomNavController()),
+            MaterialPageRoute(builder: (_) => const CustomerPanelShell()),
           ),
         )
         .catchError((error) => print("something is wrong. $error"));
@@ -76,7 +78,7 @@ class _UserFormState extends State<UserForm> {
                   "Submit the form to continue.",
                   style: TextStyle(
                     fontSize: 22.sp,
-                    color: AppColors.deep_orange,
+                    color: AppColors.deepOrange,
                   ),
                 ),
                 Text(
@@ -114,7 +116,7 @@ class _UserFormState extends State<UserForm> {
                       items: gender.map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: new Text(value),
+                          child: Text(value),
                           onTap: () {
                             setState(() {
                               _genderController.text = value;

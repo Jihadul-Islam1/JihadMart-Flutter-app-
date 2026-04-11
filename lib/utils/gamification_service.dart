@@ -6,7 +6,7 @@ class GamificationService {
   static int _coins = 1250;
   static int _streak = 7;
 
-  static List<Map<String, dynamic>> _levels = [
+  static final List<Map<String, dynamic>> _levels = [
     {
       'level': 1,
       'name': 'নবাগত',
@@ -79,7 +79,7 @@ class GamificationService {
     },
   ];
 
-  static List<Map<String, dynamic>> _achievements = [
+  static final List<Map<String, dynamic>> _achievements = [
     {
       'id': 'ach1',
       'name': 'প্রথম অর্ডার',
@@ -141,7 +141,7 @@ class GamificationService {
     },
   ];
 
-  static List<Map<String, dynamic>> _dailyChallenges = [
+  static final List<Map<String, dynamic>> _dailyChallenges = [
     {
       'id': 'dc1',
       'name': 'ডেইলি চেক-ইন',
@@ -256,7 +256,7 @@ class GamificationService {
 
 // Leaderboard Service
 class LeaderboardService {
-  static List<Map<String, dynamic>> _weeklyLeaderboard = [
+  static final List<Map<String, dynamic>> _weeklyLeaderboard = [
     {'rank': 1, 'name': 'Rahim M.', 'avatar': 'R', 'xp': 5200, 'badge': '🥇'},
     {'rank': 2, 'name': 'Fatima K.', 'avatar': 'F', 'xp': 4800, 'badge': '🥈'},
     {'rank': 3, 'name': 'Karim A.', 'avatar': 'K', 'xp': 4500, 'badge': '🥉'},
@@ -272,7 +272,7 @@ class LeaderboardService {
     },
   ];
 
-  static List<Map<String, dynamic>> _monthlyLeaderboard = [
+  static final List<Map<String, dynamic>> _monthlyLeaderboard = [
     {
       'rank': 1,
       'name': 'Tech Master',

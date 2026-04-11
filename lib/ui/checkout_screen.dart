@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/ui/profile/shipping_address.dart';
 import 'package:jihad/ui/payment_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final List<Map<String, dynamic>> cartItems;
+  final double subtotalAmount;
+  final double shippingAmount;
+  final double taxAmount;
+  final double discountAmount;
   final double totalAmount;
+  final String shippingAddress;
 
   const CheckoutScreen({
-    Key? key,
+    super.key,
     required this.cartItems,
+    required this.subtotalAmount,
+    required this.shippingAmount,
+    required this.taxAmount,
+    required this.discountAmount,
     required this.totalAmount,
-  }) : super(key: key);
+    required this.shippingAddress,
+  });
 
   @override
   _CheckoutScreenState createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  String _shippingAddress = "House 12, Road 5, Dhanmondi, Dhaka";
+  late String _shippingAddress;
   final TextEditingController _promoController = TextEditingController();
   double _discount = 0;
   String _appliedPromo = '';
@@ -31,12 +41,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     'FREESHIP': 10, // Free shipping
   };
 
+  @override
+  void initState() {
+    super.initState();
+    _shippingAddress = widget.shippingAddress;
+    _discount = widget.discountAmount;
+  }
+
   void _applyPromoCode() {
     final code = _promoController.text.toUpperCase().trim();
     if (_promoCodes.containsKey(code)) {
       setState(() {
         if (code == 'FLASH20') {
-          _discount = widget.totalAmount * _promoCodes[code]!;
+          _discount = widget.subtotalAmount * _promoCodes[code]!;
         } else {
           _discount = _promoCodes[code]!;
         }
@@ -110,12 +127,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   Container(
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.deep_orange.withOpacity(0.1),
+                      color: AppColors.deepOrange.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.location_on,
-                      color: AppColors.deep_orange,
+                      color: AppColors.deepOrange,
                     ),
                   ),
                   SizedBox(width: 15.w),
@@ -148,13 +165,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       );
                       if (result != null) {
                         setState(() {
-                          _shippingAddress = result;
+                          _shippingAddress = result.toString();
                         });
                       }
                     },
                     child: Text(
                       "Change",
-                      style: TextStyle(color: AppColors.deep_orange),
+                      style: TextStyle(color: AppColors.deepOrange),
                     ),
                   ),
                 ],
@@ -193,7 +210,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         border: InputBorder.none,
                         prefixIcon: Icon(
                           Icons.local_offer,
-                          color: AppColors.deep_orange,
+                          color: AppColors.deepOrange,
                         ),
                       ),
                     ),
@@ -202,7 +219,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     onPressed: _appliedPromo.isEmpty ? _applyPromoCode : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _appliedPromo.isEmpty
-                          ? AppColors.deep_orange
+                          ? AppColors.deepOrange
                           : Colors.grey,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -251,11 +268,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               child: Column(
                 children: [
-                  _buildSummaryRow("Subtotal", "৳${widget.totalAmount}"),
+                  _buildSummaryRow(
+                    "Subtotal",
+                    "৳${widget.subtotalAmount.toStringAsFixed(0)}",
+                  ),
                   SizedBox(height: 10.h),
-                  _buildSummaryRow("Shipping", "৳10.00"),
+                  _buildSummaryRow(
+                    "Shipping",
+                    "৳${widget.shippingAmount.toStringAsFixed(0)}",
+                  ),
                   SizedBox(height: 10.h),
-                  _buildSummaryRow("Tax", "৳5.00"),
+                  _buildSummaryRow(
+                    "Tax",
+                    "৳${widget.taxAmount.toStringAsFixed(0)}",
+                  ),
                   if (_discount > 0) ...[
                     SizedBox(height: 10.h),
                     Row(
@@ -282,7 +308,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   Divider(height: 30.h),
                   _buildSummaryRow(
                     "Total",
-                    "৳${(widget.totalAmount + 15.00 - _discount).toStringAsFixed(0)}",
+                    "৳${(widget.totalAmount - _discount).toStringAsFixed(0)}",
                     isTotal: true,
                   ),
                 ],
@@ -302,14 +328,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     MaterialPageRoute(
                       builder: (_) => PaymentScreen(
                         cartItems: widget.cartItems,
-                        totalAmount:
-                            widget.totalAmount +
-                            15.00 -
-                            _discount, // Including shipping, tax, minus discount
+                        subtotalAmount: widget.subtotalAmount,
+                        shippingAmount: widget.shippingAmount,
+                        taxAmount: widget.taxAmount,
+                        discountAmount: _discount,
+                        totalAmount: widget.totalAmount - _discount,
+                        shippingAddress: _shippingAddress,
                       ),
                     ),
                   );
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.deepOrange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 5,
+                ),
                 child: Text(
                   "Proceed to Payment",
                   style: TextStyle(
@@ -317,13 +352,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.deep_orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  elevation: 5,
                 ),
               ),
             ),
@@ -350,7 +378,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           style: TextStyle(
             fontSize: isTotal ? 18.sp : 14.sp,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.bold,
-            color: isTotal ? AppColors.deep_orange : Colors.black87,
+            color: isTotal ? AppColors.deepOrange : Colors.black87,
           ),
         ),
       ],

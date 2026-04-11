@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jihad/ui/login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -224,10 +226,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.deep_orange.withOpacity(0.1),
+              color: AppColors.deepOrange.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: AppColors.deep_orange, size: 22.sp),
+            child: Icon(icon, color: AppColors.deepOrange, size: 22.sp),
           ),
           SizedBox(width: 15.w),
           Expanded(
@@ -258,12 +260,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     content: Text(
                       val ? "Dark Mode enabled" : "Light Mode enabled",
                     ),
-                    backgroundColor: AppColors.deep_orange,
+                    backgroundColor: AppColors.deepOrange,
                   ),
                 );
               }
             },
-            activeTrackColor: AppColors.deep_orange,
+            activeTrackColor: AppColors.deepOrange,
           ),
         ],
       ),
@@ -430,10 +432,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         leading: Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.deep_orange.withOpacity(0.1),
+            color: AppColors.deepOrange.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: AppColors.deep_orange, size: 22.sp),
+          child: Icon(icon, color: AppColors.deepOrange, size: 22.sp),
         ),
         title: Text(
           title,
@@ -469,7 +471,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             width: 60.w,
             height: 60.w,
             decoration: BoxDecoration(
-              color: AppColors.deep_orange,
+              color: AppColors.deepOrange,
               borderRadius: BorderRadius.circular(15),
             ),
             child: Icon(Icons.shopping_bag, color: Colors.white, size: 30.sp),
@@ -577,11 +579,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
-                    color: isSelected ? AppColors.deep_orange : Colors.black,
+                    color: isSelected ? AppColors.deepOrange : Colors.black,
                   ),
                 ),
                 trailing: isSelected
-                    ? Icon(Icons.check_circle, color: AppColors.deep_orange)
+                    ? Icon(Icons.check_circle, color: AppColors.deepOrange)
                     : null,
                 onTap: () {
                   _updateSetting('language', lang['name']);
@@ -589,7 +591,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text("Language changed to ${lang['name']}"),
-                      backgroundColor: AppColors.deep_orange,
+                      backgroundColor: AppColors.deepOrange,
                     ),
                   );
                 },
@@ -657,11 +659,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
-                    color: isSelected ? AppColors.deep_orange : Colors.black,
+                    color: isSelected ? AppColors.deepOrange : Colors.black,
                   ),
                 ),
                 trailing: isSelected
-                    ? Icon(Icons.check_circle, color: AppColors.deep_orange)
+                    ? Icon(Icons.check_circle, color: AppColors.deepOrange)
                     : null,
                 onTap: () {
                   _updateSetting('currency', currency);
@@ -669,7 +671,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text("Currency changed to $currency"),
-                      backgroundColor: AppColors.deep_orange,
+                      backgroundColor: AppColors.deepOrange,
                     ),
                   );
                 },
@@ -757,7 +759,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.deep_orange,
+              backgroundColor: AppColors.deepOrange,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -967,7 +969,7 @@ Phone: +880 1234567890
               width: 80.w,
               height: 80.w,
               decoration: BoxDecoration(
-                color: AppColors.deep_orange,
+                color: AppColors.deepOrange,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(Icons.shopping_bag, color: Colors.white, size: 40.sp),
@@ -1015,7 +1017,7 @@ Phone: +880 1234567890
           style: TextStyle(
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
-            color: AppColors.deep_orange,
+            color: AppColors.deepOrange,
           ),
         ),
         Text(

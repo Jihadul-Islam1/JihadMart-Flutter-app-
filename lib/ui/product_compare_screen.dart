@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 
 class ProductCompareScreen extends StatefulWidget {
   const ProductCompareScreen({super.key});
@@ -57,7 +57,7 @@ class _ProductCompareScreenState extends State<ProductCompareScreen> {
     },
   ];
 
-  List<Map<String, dynamic>> _selectedProducts = [];
+  final List<Map<String, dynamic>> _selectedProducts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +87,7 @@ class _ProductCompareScreenState extends State<ProductCompareScreen> {
               },
               child: Text(
                 "Clear All",
-                style: TextStyle(color: AppColors.deep_orange, fontSize: 14.sp),
+                style: TextStyle(color: AppColors.deepOrange, fontSize: 14.sp),
               ),
             ),
         ],
@@ -113,7 +113,7 @@ class _ProductCompareScreenState extends State<ProductCompareScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.deep_orange),
+                          border: Border.all(color: AppColors.deepOrange),
                         ),
                         child: Column(
                           children: [
@@ -180,7 +180,7 @@ class _ProductCompareScreenState extends State<ProductCompareScreen> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deep_orange,
+                    backgroundColor: AppColors.deepOrange,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -244,7 +244,7 @@ class _ProductCompareScreenState extends State<ProductCompareScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
-                            ? AppColors.deep_orange
+                            ? AppColors.deepOrange
                             : Colors.transparent,
                         width: 2,
                       ),
@@ -306,7 +306,7 @@ class _ProductCompareScreenState extends State<ProductCompareScreen> {
                                   Text(
                                     "৳${product['product-price']}",
                                     style: TextStyle(
-                                      color: AppColors.deep_orange,
+                                      color: AppColors.deepOrange,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14.sp,
                                     ),
@@ -318,7 +318,7 @@ class _ProductCompareScreenState extends State<ProductCompareScreen> {
                         ),
                         Checkbox(
                           value: isSelected,
-                          activeColor: AppColors.deep_orange,
+                          activeColor: AppColors.deepOrange,
                           onChanged: (value) {
                             setState(() {
                               if (value == true &&
@@ -424,7 +424,7 @@ class _ProductCompareScreenState extends State<ProductCompareScreen> {
                               (p) => Text(
                                 "৳${p['product-price']}",
                                 style: TextStyle(
-                                  color: AppColors.deep_orange,
+                                  color: AppColors.deepOrange,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

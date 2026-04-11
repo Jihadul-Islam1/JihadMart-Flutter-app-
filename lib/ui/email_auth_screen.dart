@@ -3,24 +3,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jihad/const/AppColors.dart';
-import 'package:jihad/ui/bottom_nav_controller.dart';
+import 'package:jihad/core/config/app_config.dart';
+import 'package:jihad/const/app_colors.dart';
+import 'package:jihad/features/shared/presentation/screens/role_gate_screen.dart';
 
 class EmailAuthScreen extends StatefulWidget {
-  const EmailAuthScreen({Key? key}) : super(key: key);
+  const EmailAuthScreen({super.key});
 
   @override
   _EmailAuthScreenState createState() => _EmailAuthScreenState();
 }
 
 class _EmailAuthScreenState extends State<EmailAuthScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _otpController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
   bool _isLoading = false;
   bool _isOTPSent = false;
-
-  // Initialize EmailOTP
-  final EmailOTP _emailOTP = EmailOTP();
+  bool _hasConfiguredOtp = false;
 
   // Send OTP
   Future<void> _sendOTP() async {
@@ -39,16 +38,52 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     });
 
     try {
-      // Configure EmailOTP
-      _emailOTP.setConfig(
-        appEmail: "noreply@jihadmart.com",
-        appName: "Jihad Mart",
-        userEmail: _emailController.text,
+      await AppConfig.load();
+
+      final smtpHost = AppConfig.emailOtpSmtpHost.trim();
+      final smtpUsername = AppConfig.emailOtpSmtpUsername.trim();
+      final smtpPassword = AppConfig.emailOtpSmtpPassword.trim();
+      final appEmail = AppConfig.emailOtpAppEmail.trim();
+
+      if (smtpHost.isEmpty || smtpUsername.isEmpty || smtpPassword.isEmpty || appEmail.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        Fluttertoast.showToast(
+          msg: 'Email OTP SMTP config missing. Set EMAIL_OTP_APP_EMAIL, EMAIL_OTP_SMTP_HOST, EMAIL_OTP_SMTP_USERNAME, and EMAIL_OTP_SMTP_PASSWORD.',
+          toastLength: Toast.LENGTH_LONG,
+        );
+        return;
+      }
+
+      EmailOTP.config(
+        appName: AppConfig.emailOtpAppName.isEmpty ? 'Jihad Mart' : AppConfig.emailOtpAppName,
+        appEmail: appEmail,
         otpLength: 6,
-        otpType: OTPType.digitsOnly,
+        otpType: OTPType.numeric,
       );
 
-      bool result = await _emailOTP.sendOTP();
+      final secureType = switch (AppConfig.emailOtpSmtpSecureType.toLowerCase()) {
+        'ssl' => SecureType.ssl,
+        'none' => SecureType.none,
+        _ => SecureType.tls,
+      };
+
+      EmailOTP.setSMTP(
+        emailPort: AppConfig.emailOtpSmtpPort == 465
+            ? EmailPort.port465
+            : (AppConfig.emailOtpSmtpPort == 25 ? EmailPort.port25 : EmailPort.port587),
+        secureType: secureType,
+        host: smtpHost,
+        username: smtpUsername,
+        password: smtpPassword,
+      );
+
+      _hasConfiguredOtp = true;
+
+      final bool result = await EmailOTP.sendOTP(
+        email: _emailController.text.trim(),
+      );
 
       if (result) {
         setState(() {
@@ -82,7 +117,15 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     });
 
     try {
-      bool result = await _emailOTP.verifyOTP(otp: _otpController.text);
+      if (!_hasConfiguredOtp) {
+        Fluttertoast.showToast(msg: 'Please send OTP first.');
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final bool result = await EmailOTP.verifyOTP(otp: _otpController.text);
 
       if (result) {
         Fluttertoast.showToast(msg: "Email Verified Successfully!");
@@ -94,7 +137,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
 
         Navigator.pushAndRemoveUntil(
           context,
-          CupertinoPageRoute(builder: (_) => BottomNavController()),
+          CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
           (route) => false,
         );
       } else {
@@ -107,14 +150,14 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
       setState(() {
         _isLoading = false;
       });
-      Fluttertoast.showToast(msg: "Error verifying OTP");
+      Fluttertoast.showToast(msg: "Error verifying OTP: $e");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.deep_orange,
+      backgroundColor: AppColors.deepOrange,
       body: SafeArea(
         child: Column(
           children: [
@@ -158,7 +201,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                         _isOTPSent ? "Enter OTP" : "Enter Email Address",
                         style: TextStyle(
                           fontSize: 20.sp,
-                          color: AppColors.deep_orange,
+                          color: AppColors.deepOrange,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -181,7 +224,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                             labelText: "Email Address",
                             prefixIcon: Icon(
                               Icons.email,
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.r),
@@ -198,7 +241,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                             labelText: "OTP",
                             prefixIcon: Icon(
                               Icons.lock,
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.r),
@@ -216,7 +259,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                               ? null
                               : (_isOTPSent ? _verifyOTP : _sendOTP),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.deep_orange,
+                            backgroundColor: AppColors.deepOrange,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.r),
                             ),

@@ -29,6 +29,38 @@ Alternatively, you may hardcode the key in `lib/utils/ai/gemini_service.dart` by
 
 You can change the model by editing `GeminiService.modelName`.
 
+## Vendor product image upload
+
+Vendor product photos use ImgBB as the default free image host. Set the key once in the project-level `.env` file and every vendor will use it automatically:
+
+```env
+IMGBB_API_KEY=YOUR_IMGBB_KEY
+```
+
+The app already loads `.env` on startup, so you do not need to pass the key again for each vendor or each product upload. If `.env` is missing, you can still pass it with `--dart-define=IMGBB_API_KEY=YOUR_IMGBB_KEY`.
+
+## SSLCommerz payment setup
+
+Online payments are now integrated with `flutter_sslcommerz`.
+
+Follow the full setup and sandbox-to-live steps in `docs/sslcommerz-setup.md`.
+
+## Email OTP login setup
+
+Email OTP login uses SMTP. Add these to `.env` before testing:
+
+```env
+EMAIL_OTP_APP_NAME=Jihad Mart
+EMAIL_OTP_APP_EMAIL=your-smtp-sender@example.com
+EMAIL_OTP_SMTP_HOST=smtp.gmail.com
+EMAIL_OTP_SMTP_USERNAME=your-smtp-username@example.com
+EMAIL_OTP_SMTP_PASSWORD=your-smtp-app-password
+EMAIL_OTP_SMTP_PORT=587
+EMAIL_OTP_SMTP_SECURE_TYPE=tls
+```
+
+For Gmail, use an app password, not your normal account password.
+
 
 ## Getting Started
 

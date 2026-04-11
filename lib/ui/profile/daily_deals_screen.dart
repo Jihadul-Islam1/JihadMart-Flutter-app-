@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/utils/daily_deals_service.dart';
 
 class DailyDealsScreen extends StatefulWidget {
+  const DailyDealsScreen({super.key});
+
   @override
   _DailyDealsScreenState createState() => _DailyDealsScreenState();
 }
@@ -67,7 +69,7 @@ class _DailyDealsScreenState extends State<DailyDealsScreen> {
             ),
             SizedBox(height: 15.h),
 
-            ...deals.map((deal) => _buildDealCard(deal)).toList(),
+            ...deals.map((deal) => _buildDealCard(deal)),
           ],
         ),
       ),
@@ -446,7 +448,7 @@ class _DailyDealsScreenState extends State<DailyDealsScreen> {
                           Text(
                             "৳${deal['deal-price'].toStringAsFixed(0)}",
                             style: TextStyle(
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -478,7 +480,7 @@ class _DailyDealsScreenState extends State<DailyDealsScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deep_orange,
+                    backgroundColor: AppColors.deepOrange,
                     padding: EdgeInsets.symmetric(
                       horizontal: 15.w,
                       vertical: 10.h,

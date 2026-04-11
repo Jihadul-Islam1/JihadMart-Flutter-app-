@@ -6,19 +6,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/widgets/customButton.dart';
 
 class EditProductScreen extends StatefulWidget {
   final QueryDocumentSnapshot product;
 
-  const EditProductScreen({Key? key, required this.product}) : super(key: key);
+  const EditProductScreen({super.key, required this.product});
 
   @override
-  _EditProductScreenState createState() => _EditProductScreenState();
+  EditProductScreenState createState() => EditProductScreenState();
 }
 
-class _EditProductScreenState extends State<EditProductScreen> {
+class EditProductScreenState extends State<EditProductScreen> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _priceController;
@@ -82,11 +82,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
         var jsonResponse = json.decode(responseString);
         return jsonResponse['data']['url'];
       } else {
-        print("ImgBB Error: ${res.statusCode}");
         return null;
       }
     } catch (e) {
-      print("Error uploading image: $e");
       return null;
     }
   }
@@ -133,6 +131,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           });
 
       Fluttertoast.showToast(msg: "Product Updated Successfully!");
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
       Fluttertoast.showToast(msg: "Error: $e");
@@ -148,7 +147,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Product"),
-        backgroundColor: AppColors.deep_orange,
+        backgroundColor: AppColors.deepOrange,
       ),
       body: Padding(
         padding: EdgeInsets.all(20.w),

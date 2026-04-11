@@ -6,14 +6,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 
 class AddProductScreen extends StatefulWidget {
+  const AddProductScreen({super.key});
+
   @override
-  _AddProductScreenState createState() => _AddProductScreenState();
+  AddProductScreenState createState() => AddProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
@@ -69,11 +71,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
         var jsonResponse = json.decode(responseString);
         return jsonResponse['data']['url'];
       } else {
-        print("ImgBB Error: ${res.statusCode}");
         return null;
       }
     } catch (e) {
-      print("Error uploading image: $e");
       return null;
     }
   }
@@ -115,6 +115,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       });
 
       Fluttertoast.showToast(msg: "Product added successfully!");
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
       Fluttertoast.showToast(msg: "Error adding product: $e");
@@ -130,7 +131,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add New Product"),
-        backgroundColor: AppColors.deep_orange,
+        backgroundColor: AppColors.deepOrange,
       ),
       body: Padding(
         padding: EdgeInsets.all(20.w),
@@ -205,7 +206,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _addProduct,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deep_orange,
+                    backgroundColor: AppColors.deepOrange,
                   ),
                   child: _isLoading
                       ? CircularProgressIndicator(color: Colors.white)

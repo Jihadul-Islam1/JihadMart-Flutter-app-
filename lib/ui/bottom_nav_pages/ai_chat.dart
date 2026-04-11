@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jihad/utils/ai/message.dart';
 import 'package:jihad/services/api_service.dart';
@@ -99,7 +99,7 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
                     constraints: BoxConstraints(maxWidth: 0.8.sw),
                     decoration: BoxDecoration(
                       color: isUser
-                          ? AppColors.deep_orange.withOpacity(0.1)
+                          ? AppColors.deepOrange.withAlpha(25)
                           : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(14.r).copyWith(
                         bottomLeft: Radius.circular(isUser ? 14.r : 2.r),
@@ -107,7 +107,7 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
                       ),
                       border: Border.all(
                         color: isUser
-                            ? AppColors.deep_orange.withOpacity(0.3)
+                            ? AppColors.deepOrange.withAlpha(76)
                             : Colors.grey.shade300,
                       ),
                     ),
@@ -128,7 +128,7 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withAlpha(12),
                     blurRadius: 12,
                     offset: const Offset(0, -4),
                   ),
@@ -169,7 +169,7 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
                               strokeWidth: 2,
                             ),
                           )
-                        : Icon(Icons.send, color: AppColors.deep_orange),
+                        : Icon(Icons.send, color: AppColors.deepOrange),
                   ),
                 ],
               ),

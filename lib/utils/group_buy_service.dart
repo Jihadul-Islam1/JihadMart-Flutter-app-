@@ -1,6 +1,6 @@
 // Group Buy / Bundle Deals Service
 class GroupBuyService {
-  static List<Map<String, dynamic>> _groupDeals = [
+  static final List<Map<String, dynamic>> _groupDeals = [
     {
       'id': 'group1',
       'product': 'Smart Watch Pro',

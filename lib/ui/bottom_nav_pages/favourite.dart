@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jihad/ui/bottom_nav_controller.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jihad/utils/cart_service.dart';
 
 class Favourite extends StatefulWidget {
+  const Favourite({super.key});
+
   @override
   _FavouriteState createState() => _FavouriteState();
 }
@@ -123,7 +125,7 @@ class _FavouriteState extends State<Favourite> {
                       child: Icon(
                         Icons.favorite_border,
                         size: 60.sp,
-                        color: AppColors.deep_orange,
+                        color: AppColors.deepOrange,
                       ),
                     ),
                     SizedBox(height: 20.h),
@@ -154,16 +156,8 @@ class _FavouriteState extends State<Favourite> {
                           ),
                         );
                       },
-                      child: Text(
-                        "Explore Products",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.deep_orange,
+                        backgroundColor: AppColors.deepOrange,
                         padding: EdgeInsets.symmetric(
                           horizontal: 40.w,
                           vertical: 15.h,
@@ -172,6 +166,14 @@ class _FavouriteState extends State<Favourite> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         elevation: 5,
+                      ),
+                      child: Text(
+                        "Explore Products",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],
@@ -200,12 +202,12 @@ class _FavouriteState extends State<Favourite> {
                           icon: Icon(
                             Icons.shopping_cart_outlined,
                             size: 18.sp,
-                            color: AppColors.deep_orange,
+                            color: AppColors.deepOrange,
                           ),
                           label: Text(
                             "Add All to Cart",
                             style: TextStyle(
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -305,7 +307,7 @@ class _FavouriteState extends State<Favourite> {
                                       "৳${item['price']}",
                                       style: TextStyle(
                                         fontSize: 16.sp,
-                                        color: AppColors.deep_orange,
+                                        color: AppColors.deepOrange,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -332,19 +334,19 @@ class _FavouriteState extends State<Favourite> {
                                             ),
                                           );
                                         },
-                                        child: Text(
-                                          "Add to Cart",
-                                          style: TextStyle(fontSize: 12.sp),
-                                        ),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
-                                              AppColors.deep_orange,
+                                              AppColors.deepOrange,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               8,
                                             ),
                                           ),
                                           padding: EdgeInsets.zero,
+                                        ),
+                                        child: Text(
+                                          "Add to Cart",
+                                          style: TextStyle(fontSize: 12.sp),
                                         ),
                                       ),
                                     ),

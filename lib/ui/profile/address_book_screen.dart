@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/utils/address_service.dart';
 
 class AddressBookScreen extends StatefulWidget {
   final bool isSelecting;
 
-  AddressBookScreen({this.isSelecting = false});
+  const AddressBookScreen({super.key, this.isSelecting = false});
 
   @override
   _AddressBookScreenState createState() => _AddressBookScreenState();
@@ -45,7 +45,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddAddressDialog(),
-        backgroundColor: AppColors.deep_orange,
+        backgroundColor: AppColors.deepOrange,
         icon: Icon(Icons.add, color: Colors.white),
         label: Text(
           "নতুন ঠিকানা",
@@ -114,7 +114,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
           border: isDefault
-              ? Border.all(color: AppColors.deep_orange, width: 2)
+              ? Border.all(color: AppColors.deepOrange, width: 2)
               : null,
           boxShadow: [
             BoxShadow(
@@ -146,13 +146,13 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                       vertical: 3.h,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.deep_orange.withOpacity(0.1),
+                      color: AppColors.deepOrange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       "Default",
                       style: TextStyle(
-                        color: AppColors.deep_orange,
+                        color: AppColors.deepOrange,
                         fontSize: 10.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -297,7 +297,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                         child: ChoiceChip(
                           label: Text(label),
                           selected: isSelected,
-                          selectedColor: AppColors.deep_orange,
+                          selectedColor: AppColors.deepOrange,
                           labelStyle: TextStyle(
                             color: isSelected ? Colors.white : Colors.black,
                           ),
@@ -365,7 +365,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                             setAsDefault = val ?? false;
                           });
                         },
-                        activeColor: AppColors.deep_orange,
+                        activeColor: AppColors.deepOrange,
                       ),
                       Text(
                         "Default ঠিকানা হিসেবে সেট করুন",
@@ -404,7 +404,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.deep_orange,
+                        backgroundColor: AppColors.deepOrange,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -441,7 +441,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
       maxLines: maxLines,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: AppColors.deep_orange),
+        prefixIcon: Icon(icon, color: AppColors.deepOrange),
         filled: true,
         fillColor: Colors.grey[50],
         border: OutlineInputBorder(
@@ -450,7 +450,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.deep_orange),
+          borderSide: BorderSide(color: AppColors.deepOrange),
         ),
       ),
     );
@@ -518,7 +518,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                         child: ChoiceChip(
                           label: Text(label),
                           selected: isSelected,
-                          selectedColor: AppColors.deep_orange,
+                          selectedColor: AppColors.deepOrange,
                           labelStyle: TextStyle(
                             color: isSelected ? Colors.white : Colors.black,
                           ),
@@ -602,7 +602,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.deep_orange,
+                        backgroundColor: AppColors.deepOrange,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),

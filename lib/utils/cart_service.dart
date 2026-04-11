@@ -1,7 +1,7 @@
 // lib/utils/cart_service.dart
 class CartService {
   static List<Map<String, dynamic>> _cartItems = [];
-  static List<Map<String, dynamic>> _favouriteItems = [];
+  static final List<Map<String, dynamic>> _favouriteItems = [];
 
   // Cart methods
   static List<Map<String, dynamic>> getCartItems() {
@@ -17,17 +17,24 @@ class CartService {
     if (index != -1) {
       _cartItems[index]['quantity'] = (_cartItems[index]['quantity'] ?? 0) + 1;
     } else {
-      var images = product["product-img"];
+      var images = product["product-img"] ?? product["images"];
       if (images is! List || images.isEmpty) {
-        images = ["assets/logo/logo1.png"];
+        images = ["assets/products/product1.jpg"];
       }
 
-      _cartItems.add({
+      final cartItem = {
         "name": product["product-name"],
         "price": product["product-price"],
         "images": images,
         "quantity": 1,
-      });
+      };
+
+      // Preserve storeId if available (for vendor products)
+      if (product["storeId"] != null && product["storeId"].toString().isNotEmpty) {
+        cartItem["storeId"] = product["storeId"];
+      }
+
+      _cartItems.add(cartItem);
     }
   }
 

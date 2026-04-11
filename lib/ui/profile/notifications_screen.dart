@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
+import 'package:jihad/core/services/notification_repository.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -10,64 +12,7 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  final List<Map<String, dynamic>> _notifications = [
-    {
-      "title": "Order Confirmed! 🎉",
-      "message":
-          "Your order #ORD-2025-001 has been confirmed and is being processed.",
-      "time": "2 min ago",
-      "type": "order",
-      "isRead": false,
-    },
-    {
-      "title": "Flash Sale Starting Soon! ⚡",
-      "message":
-          "Get ready! Flash sale starts in 1 hour with up to 50% off on electronics.",
-      "time": "1 hour ago",
-      "type": "promo",
-      "isRead": false,
-    },
-    {
-      "title": "Order Shipped 📦",
-      "message":
-          "Your order #ORD-2025-002 has been shipped. Track your delivery now!",
-      "time": "3 hours ago",
-      "type": "order",
-      "isRead": true,
-    },
-    {
-      "title": "New Coupon Available! 🎁",
-      "message":
-          "Use code SAVE20 to get 20% off on your next purchase. Valid till Dec 31.",
-      "time": "Yesterday",
-      "type": "promo",
-      "isRead": true,
-    },
-    {
-      "title": "Payment Successful ✅",
-      "message":
-          "Payment of ৳2,500 for order #ORD-2025-003 was successful via bKash.",
-      "time": "2 days ago",
-      "type": "payment",
-      "isRead": true,
-    },
-    {
-      "title": "Order Delivered! 🚚",
-      "message":
-          "Your order #ORD-2024-099 has been delivered. Please rate your experience!",
-      "time": "3 days ago",
-      "type": "order",
-      "isRead": true,
-    },
-    {
-      "title": "Price Drop Alert! 📉",
-      "message":
-          "An item in your wishlist is now ৳500 cheaper! Check it out before it's gone.",
-      "time": "5 days ago",
-      "type": "promo",
-      "isRead": true,
-    },
-  ];
+  final NotificationRepository _repository = NotificationRepository();
 
   IconData _getIcon(String type) {
     switch (type) {
@@ -117,12 +62,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {
-              setState(() {
-                for (var notification in _notifications) {
-                  notification['isRead'] = true;
-                }
-              });
+            onPressed: () async {
+              await _repository.markAllAsRead();
+              if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text("All notifications marked as read"),
@@ -133,13 +75,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             },
             child: Text(
               "Mark all read",
-              style: TextStyle(color: AppColors.deep_orange, fontSize: 12.sp),
+              style: TextStyle(color: AppColors.deepOrange, fontSize: 12.sp),
             ),
           ),
         ],
       ),
-      body: _notifications.isEmpty
-          ? Center(
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: _repository.watchCurrentUserNotifications(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Failed to load notifications: ${snapshot.error}'));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -164,138 +118,156 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                 ],
               ),
-            )
-          : ListView.builder(
-              padding: EdgeInsets.all(20.w),
-              itemCount: _notifications.length,
-              itemBuilder: (context, index) {
-                final notification = _notifications[index];
-                return Dismissible(
-                  key: Key(notification['title'] + index.toString()),
-                  direction: DismissDirection.endToStart,
-                  background: Container(
-                    alignment: Alignment.centerRight,
-                    padding: EdgeInsets.only(right: 20.w),
-                    margin: EdgeInsets.only(bottom: 15.h),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: const Icon(Icons.delete, color: Colors.white),
+            );
+          }
+
+          return ListView.builder(
+            padding: EdgeInsets.all(20.w),
+            itemCount: docs.length,
+            itemBuilder: (context, index) {
+              final doc = docs[index];
+              final notification = doc.data();
+              final isRead = notification['isRead'] == true;
+              final type = notification['type']?.toString() ?? 'general';
+
+              return Dismissible(
+                key: Key(doc.id),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.only(right: 20.w),
+                  margin: EdgeInsets.only(bottom: 15.h),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  onDismissed: (direction) {
-                    setState(() {
-                      _notifications.removeAt(index);
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Notification deleted"),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        notification['isRead'] = true;
-                      });
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 15.h),
-                      padding: EdgeInsets.all(15.w),
-                      decoration: BoxDecoration(
-                        color: notification['isRead']
-                            ? Colors.white
-                            : Colors.orange.shade50,
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
-                            blurRadius: 10,
-                            spreadRadius: 1,
-                          ),
-                        ],
-                        border: notification['isRead']
-                            ? null
-                            : Border.all(
-                                color: AppColors.deep_orange.withOpacity(0.3),
-                              ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(12.w),
-                            decoration: BoxDecoration(
-                              color: _getColor(
-                                notification['type'],
-                              ).withOpacity(0.1),
-                              shape: BoxShape.circle,
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                onDismissed: (direction) async {
+                  await _repository.deleteNotification(doc.id);
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Notification deleted"),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+                child: GestureDetector(
+                  onTap: () => _repository.markAsRead(doc.id),
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 15.h),
+                    padding: EdgeInsets.all(15.w),
+                    decoration: BoxDecoration(
+                      color: isRead ? Colors.white : Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          blurRadius: 10,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                      border: isRead
+                          ? null
+                          : Border.all(
+                              color: AppColors.deepOrange.withOpacity(0.3),
                             ),
-                            child: Icon(
-                              _getIcon(notification['type']),
-                              color: _getColor(notification['type']),
-                              size: 24.sp,
-                            ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                            color: _getColor(type).withOpacity(0.1),
+                            shape: BoxShape.circle,
                           ),
-                          SizedBox(width: 15.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        notification['title'],
-                                        style: TextStyle(
-                                          fontWeight: notification['isRead']
-                                              ? FontWeight.w600
-                                              : FontWeight.bold,
-                                          fontSize: 14.sp,
-                                          color: Colors.black87,
-                                        ),
+                          child: Icon(
+                            _getIcon(type),
+                            color: _getColor(type),
+                            size: 24.sp,
+                          ),
+                        ),
+                        SizedBox(width: 15.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      notification['title']?.toString() ?? 'Notification',
+                                      style: TextStyle(
+                                        fontWeight:
+                                            isRead ? FontWeight.w600 : FontWeight.bold,
+                                        fontSize: 14.sp,
+                                        color: Colors.black87,
                                       ),
                                     ),
-                                    if (!notification['isRead'])
-                                      Container(
-                                        width: 8.w,
-                                        height: 8.w,
-                                        decoration: const BoxDecoration(
-                                          color: AppColors.deep_orange,
-                                          shape: BoxShape.circle,
-                                        ),
+                                  ),
+                                  if (!isRead)
+                                    Container(
+                                      width: 8.w,
+                                      height: 8.w,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.deepOrange,
+                                        shape: BoxShape.circle,
                                       ),
-                                  ],
+                                    ),
+                                ],
+                              ),
+                              SizedBox(height: 5.h),
+                              Text(
+                                notification['message']?.toString() ?? '',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Colors.grey[600],
                                 ),
-                                SizedBox(height: 5.h),
-                                Text(
-                                  notification['message'],
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: Colors.grey[600],
-                                  ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                _formatTime(notification['createdAt']),
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  color: Colors.grey[500],
                                 ),
-                                SizedBox(height: 8.h),
-                                Text(
-                                  notification['time'],
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
+  }
+
+  String _formatTime(dynamic createdAt) {
+    if (createdAt is Timestamp) {
+      final now = DateTime.now();
+      final time = createdAt.toDate();
+      final diff = now.difference(time);
+
+      if (diff.inMinutes < 1) {
+        return 'just now';
+      }
+      if (diff.inMinutes < 60) {
+        return '${diff.inMinutes} min ago';
+      }
+      if (diff.inHours < 24) {
+        return '${diff.inHours} hour ago';
+      }
+      return '${diff.inDays} day ago';
+    }
+
+    return 'recently';
   }
 }

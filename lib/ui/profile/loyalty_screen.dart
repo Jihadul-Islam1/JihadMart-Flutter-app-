@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/utils/loyalty_service.dart';
 
 class LoyaltyScreen extends StatefulWidget {
+  const LoyaltyScreen({super.key});
+
   @override
   _LoyaltyScreenState createState() => _LoyaltyScreenState();
 }
@@ -245,7 +247,7 @@ class _LoyaltyScreenState extends State<LoyaltyScreen> {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -308,7 +310,7 @@ class _LoyaltyScreenState extends State<LoyaltyScreen> {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                   if (LoyaltyService.getPointsHistory().isEmpty)
                     Center(
                       child: Padding(
@@ -351,7 +353,7 @@ class _LoyaltyScreenState extends State<LoyaltyScreen> {
         ),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.deep_orange, size: 30.sp),
+            Icon(icon, color: AppColors.deepOrange, size: 30.sp),
             SizedBox(height: 10.h),
             Text(
               title,
@@ -390,7 +392,7 @@ class _LoyaltyScreenState extends State<LoyaltyScreen> {
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
-                color: AppColors.deep_orange,
+                color: AppColors.deepOrange,
               ),
             ),
             SizedBox(height: 10),
@@ -418,7 +420,7 @@ class _LoyaltyScreenState extends State<LoyaltyScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.share, size: 50.sp, color: AppColors.deep_orange),
+            Icon(Icons.share, size: 50.sp, color: AppColors.deepOrange),
             SizedBox(height: 15),
             Text("আপনার রেফারেল কোড:"),
             SizedBox(height: 10),
@@ -461,7 +463,7 @@ class _LoyaltyScreenState extends State<LoyaltyScreen> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.deep_orange,
+              backgroundColor: AppColors.deepOrange,
             ),
             child: Text("কপি করুন", style: TextStyle(color: Colors.white)),
           ),

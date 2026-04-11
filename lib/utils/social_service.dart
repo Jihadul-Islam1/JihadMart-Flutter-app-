@@ -1,6 +1,6 @@
 // Social Shopping Service
 class SocialService {
-  static List<Map<String, dynamic>> _following = [
+  static final List<Map<String, dynamic>> _following = [
     {
       'id': 'user1',
       'name': 'Rahim Fashion',
@@ -24,7 +24,7 @@ class SocialService {
     },
   ];
 
-  static List<Map<String, dynamic>> _feed = [
+  static final List<Map<String, dynamic>> _feed = [
     {
       'id': 'post1',
       'user': {
@@ -78,7 +78,7 @@ class SocialService {
     },
   ];
 
-  static List<Map<String, dynamic>> _sharedWishlists = [
+  static final List<Map<String, dynamic>> _sharedWishlists = [
     {
       'id': 'wishlist1',
       'owner': 'Fatima Ahmed',
@@ -209,7 +209,7 @@ class SocialService {
 
 // Live Shopping / Live Stream Service
 class LiveShoppingService {
-  static List<Map<String, dynamic>> _liveStreams = [
+  static final List<Map<String, dynamic>> _liveStreams = [
     {
       'id': 'live1',
       'title': 'Flash Sale - 50% OFF Everything! 🔥',
@@ -234,7 +234,7 @@ class LiveShoppingService {
     },
   ];
 
-  static List<Map<String, dynamic>> _upcomingLives = [
+  static final List<Map<String, dynamic>> _upcomingLives = [
     {
       'id': 'upcoming1',
       'title': 'New Arrivals Showcase 🆕',

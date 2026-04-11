@@ -4,7 +4,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/ui/profile/my_orders.dart';
 import 'package:jihad/ui/settings_screen.dart';
 import 'package:jihad/ui/support_screen.dart';
@@ -109,7 +109,7 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: AppColors.deep_orange),
+              decoration: BoxDecoration(color: AppColors.deepOrange),
               accountName: Text(
                 "Jihad Islam",
                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
@@ -121,18 +121,18 @@ class _HomeState extends State<Home> {
                   "J",
                   style: TextStyle(
                     fontSize: 40.sp,
-                    color: AppColors.deep_orange,
+                    color: AppColors.deepOrange,
                   ),
                 ),
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home, color: AppColors.deep_orange),
+              leading: Icon(Icons.home, color: AppColors.deepOrange),
               title: Text("Home"),
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
-              leading: Icon(Icons.shopping_bag, color: AppColors.deep_orange),
+              leading: Icon(Icons.shopping_bag, color: AppColors.deepOrange),
               title: Text("My Orders"),
               onTap: () {
                 Navigator.pop(context);
@@ -143,7 +143,7 @@ class _HomeState extends State<Home> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.favorite, color: AppColors.deep_orange),
+              leading: Icon(Icons.favorite, color: AppColors.deepOrange),
               title: Text("Wishlist"),
               onTap: () {
                 Navigator.pop(context);
@@ -154,7 +154,7 @@ class _HomeState extends State<Home> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings, color: AppColors.deep_orange),
+              leading: Icon(Icons.settings, color: AppColors.deepOrange),
               title: Text("Settings"),
               onTap: () {
                 Navigator.pop(context);
@@ -166,7 +166,7 @@ class _HomeState extends State<Home> {
             ),
             Divider(),
             ListTile(
-              leading: Icon(Icons.help, color: AppColors.deep_orange),
+              leading: Icon(Icons.help, color: AppColors.deepOrange),
               title: Text("Help & Support"),
               onTap: () {
                 Navigator.pop(context);
@@ -177,7 +177,7 @@ class _HomeState extends State<Home> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.logout, color: AppColors.deep_orange),
+              leading: Icon(Icons.logout, color: AppColors.deepOrange),
               title: Text("Logout"),
               onTap: () {
                 Navigator.pop(context);
@@ -204,7 +204,7 @@ class _HomeState extends State<Home> {
               TextSpan(
                 text: "Commerce",
                 style: TextStyle(
-                  color: AppColors.deep_orange,
+                  color: AppColors.deepOrange,
                   fontWeight: FontWeight.bold,
                   fontSize: 24.sp,
                 ),
@@ -226,7 +226,7 @@ class _HomeState extends State<Home> {
             await Future.delayed(Duration(seconds: 2));
             setState(() {});
           },
-          color: AppColors.deep_orange,
+          color: AppColors.deepOrange,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +240,7 @@ class _HomeState extends State<Home> {
                       borderRadius: BorderRadius.circular(15.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.1),
+                          color: Colors.grey.withOpacity(0.1),
                           blurRadius: 10,
                           spreadRadius: 2,
                         ),
@@ -258,7 +258,7 @@ class _HomeState extends State<Home> {
                         hintStyle: TextStyle(color: Colors.grey),
                         prefixIcon: Icon(
                           Icons.search,
-                          color: AppColors.deep_orange,
+                          color: AppColors.deepOrange,
                         ),
                         suffixIcon: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -352,8 +352,8 @@ class _HomeState extends State<Home> {
                         : _carouselImages.length,
                     position: _dotPosition.toDouble(),
                     decorator: DotsDecorator(
-                      activeColor: AppColors.deep_orange,
-                      color: AppColors.deep_orange.withValues(alpha: 0.3),
+                      activeColor: AppColors.deepOrange,
+                      color: AppColors.deepOrange.withOpacity(0.3),
                       spacing: EdgeInsets.all(2),
                       activeSize: Size(8, 8),
                       size: Size(6, 6),
@@ -371,14 +371,14 @@ class _HomeState extends State<Home> {
                     padding: EdgeInsets.all(20.w),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppColors.deep_orange, Colors.orangeAccent],
+                        colors: [AppColors.deepOrange, Colors.orangeAccent],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(15.r),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.deep_orange.withValues(alpha: 0.3),
+                          color: AppColors.deepOrange.withOpacity(0.3),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -411,7 +411,7 @@ class _HomeState extends State<Home> {
                               Text(
                                 "Get up to 50% off",
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.9),
+                                  color: Colors.white.withOpacity(0.9),
                                   fontSize: 14.sp,
                                 ),
                               ),
@@ -423,12 +423,12 @@ class _HomeState extends State<Home> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20.r),
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
                                   "Shop Now",
                                   style: TextStyle(
-                                    color: AppColors.deep_orange,
+                                    color: AppColors.deepOrange,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -484,7 +484,7 @@ class _HomeState extends State<Home> {
                             "Clear All",
                             style: TextStyle(
                               fontSize: 14.sp,
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                             ),
                           ),
                         ),
@@ -526,7 +526,7 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(12.r),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha: 0.1),
+                                  color: Colors.grey.withOpacity(0.1),
                                   blurRadius: 5,
                                   spreadRadius: 1,
                                 ),
@@ -558,7 +558,7 @@ class _HomeState extends State<Home> {
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12.sp,
-                                      color: AppColors.deep_orange,
+                                      color: AppColors.deepOrange,
                                     ),
                                   ),
                                 ),
@@ -627,7 +627,7 @@ class _HomeState extends State<Home> {
                         "See All",
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: AppColors.deep_orange,
+                          color: AppColors.deepOrange,
                         ),
                       ),
                     ],
@@ -666,7 +666,7 @@ class _HomeState extends State<Home> {
                             borderRadius: BorderRadius.circular(15.r),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withValues(alpha: 0.1),
+                                color: Colors.grey.withOpacity(0.1),
                                 blurRadius: 5,
                                 spreadRadius: 1,
                               ),
@@ -706,13 +706,32 @@ class _HomeState extends State<Home> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     SizedBox(height: 4.h),
-                                    Text(
-                                      "৳${product["product-price"]}",
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: AppColors.deep_orange,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "৳${product["product-price"]}",
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: AppColors.deepOrange,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.deepOrange,
+                                            borderRadius:
+                                                  BorderRadius.circular(8.r),
+                                          ),
+                                          child: Icon(
+                                            Icons.add,
+                                            size: 18.sp,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -744,7 +763,7 @@ class _HomeState extends State<Home> {
                         "See All",
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: AppColors.deep_orange,
+                          color: AppColors.deepOrange,
                         ),
                       ),
                     ],
@@ -788,7 +807,7 @@ class _HomeState extends State<Home> {
                         String imagePath =
                             (imageList is List && imageList.isNotEmpty)
                             ? imageList[0]
-                            : "assets/logo/logo1.png";
+                          : "assets/logo/JihadMartlogo.png";
                         bool isNetworkImage = imagePath.startsWith('http');
 
                         return GestureDetector(
@@ -804,7 +823,7 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(15.r),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha: 0.1),
+                                  color: Colors.grey.withOpacity(0.1),
                                   blurRadius: 5,
                                   spreadRadius: 1,
                                 ),
@@ -836,8 +855,8 @@ class _HomeState extends State<Home> {
                                         child: Container(
                                           padding: EdgeInsets.all(6),
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withValues(
-                                              alpha: 0.9,
+                                            color: Colors.white.withOpacity(
+                                              0.9,
                                             ),
                                             shape: BoxShape.circle,
                                             boxShadow: [
@@ -851,7 +870,7 @@ class _HomeState extends State<Home> {
                                           child: Icon(
                                             Icons.favorite_border,
                                             size: 18.sp,
-                                            color: AppColors.deep_orange,
+                                            color: AppColors.deepOrange,
                                           ),
                                         ),
                                       ),
@@ -883,14 +902,14 @@ class _HomeState extends State<Home> {
                                             "৳${product["product-price"]}",
                                             style: TextStyle(
                                               fontSize: 16.sp,
-                                              color: AppColors.deep_orange,
+                                              color: AppColors.deepOrange,
                                               fontWeight: FontWeight.w700,
                                             ),
                                           ),
                                           Container(
                                             padding: EdgeInsets.all(4),
                                             decoration: BoxDecoration(
-                                              color: AppColors.deep_orange,
+                                              color: AppColors.deepOrange,
                                               borderRadius:
                                                   BorderRadius.circular(8.r),
                                             ),
@@ -1019,7 +1038,7 @@ class _HomeState extends State<Home> {
                       "View All",
                       style: TextStyle(
                         fontSize: 13.sp,
-                        color: AppColors.deep_orange,
+                        color: AppColors.deepOrange,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1027,7 +1046,7 @@ class _HomeState extends State<Home> {
                     Icon(
                       Icons.arrow_forward_ios,
                       size: 12.sp,
-                      color: AppColors.deep_orange,
+                      color: AppColors.deepOrange,
                     ),
                   ],
                 ),
@@ -1076,8 +1095,8 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: (category['color'] as Color).withValues(
-                          alpha: 0.3,
+                        color: (category['color'] as Color).withOpacity(
+                          0.3,
                         ),
                         blurRadius: 8,
                         offset: Offset(0, 4),
@@ -1188,7 +1207,7 @@ class _HomeState extends State<Home> {
                 children: [
                   Icon(
                     Icons.category_rounded,
-                    color: AppColors.deep_orange,
+                    color: AppColors.deepOrange,
                     size: 24.sp,
                   ),
                   SizedBox(width: 10.w),
@@ -1249,8 +1268,8 @@ class _HomeState extends State<Home> {
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: (category['color'] as Color).withValues(
-                                  alpha: 0.25,
+                                color: (category['color'] as Color).withOpacity(
+                                  0.25,
                                 ),
                                 blurRadius: 6,
                                 offset: Offset(0, 3),
@@ -1324,7 +1343,7 @@ class _HomeState extends State<Home> {
                 child: Text(
                   'See All',
                   style: TextStyle(
-                    color: AppColors.deep_orange,
+                    color: AppColors.deepOrange,
                     fontSize: 13.sp,
                   ),
                 ),
@@ -1362,7 +1381,7 @@ class _HomeState extends State<Home> {
                       boxShadow: [
                         BoxShadow(
                           color: (feature['gradient'] as List<Color>)[0]
-                              .withValues(alpha: 0.3),
+                              .withOpacity(0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -1391,7 +1410,7 @@ class _HomeState extends State<Home> {
                             Text(
                               feature['subtitle'] as String,
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: Colors.white.withOpacity(0.9),
                                 fontSize: 10.sp,
                               ),
                               maxLines: 1,
@@ -1967,7 +1986,7 @@ class _HomeState extends State<Home> {
                 width: 42.w,
                 height: 42.w,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
+                  color: color.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 22.sp),
@@ -2048,7 +2067,7 @@ class _HomeState extends State<Home> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0xFF1E3C72).withValues(alpha: 0.4),
+                    color: Color(0xFF1E3C72).withOpacity(0.4),
                     blurRadius: 15,
                     offset: Offset(0, 8),
                   ),
@@ -2167,7 +2186,7 @@ class _HomeState extends State<Home> {
                     "See All",
                     style: TextStyle(
                       fontSize: 13.sp,
-                      color: AppColors.deep_orange,
+                      color: AppColors.deepOrange,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -2252,8 +2271,8 @@ class _HomeState extends State<Home> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: (isDebit ? Colors.red : Colors.green).withValues(
-                alpha: 0.1,
+              color: (isDebit ? Colors.red : Colors.green).withOpacity(
+                0.1,
               ),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -2485,7 +2504,10 @@ class _HomeState extends State<Home> {
                 ),
                 Text(
                   subtitle,
-                  style: TextStyle(color: Colors.grey[500], fontSize: 11.sp),
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 11.sp,
+                  ),
                 ),
               ],
             ),
@@ -2538,7 +2560,7 @@ class _HomeState extends State<Home> {
                 children: [
                   Icon(
                     Icons.confirmation_number,
-                    color: AppColors.deep_orange,
+                    color: AppColors.deepOrange,
                     size: 28.sp,
                   ),
                   SizedBox(width: 12.w),
@@ -2619,10 +2641,10 @@ class _HomeState extends State<Home> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             offset: Offset(0, 3),
           ),
@@ -2654,7 +2676,7 @@ class _HomeState extends State<Home> {
                 Text(
                   discount.split(' ').length > 1 ? discount.split(' ')[1] : '',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: Colors.white.withOpacity(0.9),
                     fontSize: 12.sp,
                   ),
                 ),
@@ -2797,7 +2819,7 @@ class _HomeState extends State<Home> {
                   Text(
                     "Shop & earn points. Redeem for discounts!",
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: Colors.white.withOpacity(0.9),
                       fontSize: 12.sp,
                     ),
                   ),
@@ -2871,7 +2893,7 @@ class _HomeState extends State<Home> {
               Spacer(),
               Text(
                 "See All",
-                style: TextStyle(fontSize: 14.sp, color: AppColors.deep_orange),
+                style: TextStyle(fontSize: 14.sp, color: AppColors.deepOrange),
               ),
             ],
           ),
@@ -2898,7 +2920,7 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.1),
+                        color: Colors.grey.withOpacity(0.1),
                         blurRadius: 10,
                         spreadRadius: 2,
                       ),
@@ -3002,7 +3024,7 @@ class _HomeState extends State<Home> {
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.deep_orange,
+                                color: AppColors.deepOrange,
                               ),
                             ),
                           ],

@@ -1,9 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 
 class VirtualFittingRoomScreen extends StatefulWidget {
-  const VirtualFittingRoomScreen({Key? key}) : super(key: key);
+  const VirtualFittingRoomScreen({super.key});
 
   @override
   _VirtualFittingRoomScreenState createState() =>
@@ -83,7 +83,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.camera_alt, color: AppColors.deep_orange),
+            icon: Icon(Icons.camera_alt, color: AppColors.deepOrange),
             onPressed: _capturePhoto,
           ),
         ],
@@ -137,7 +137,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CircularProgressIndicator(
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                               strokeWidth: 3,
                             ),
                             SizedBox(height: 20.h),
@@ -196,13 +196,13 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
                           vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.deep_orange.withOpacity(0.1),
+                          color: AppColors.deepOrange.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Text(
                           "Size: $_selectedSize",
                           style: TextStyle(
-                            color: AppColors.deep_orange,
+                            color: AppColors.deepOrange,
                             fontWeight: FontWeight.bold,
                             fontSize: 12.sp,
                           ),
@@ -253,7 +253,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
                               shape: BoxShape.circle,
                               border: _selectedModel == _models[index - 1]
                                   ? Border.all(
-                                      color: AppColors.deep_orange,
+                                      color: AppColors.deepOrange,
                                       width: 2,
                                     )
                                   : null,
@@ -284,7 +284,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
                           icon: Icon(Icons.straighten, size: 16.sp),
                           label: Text("Change Size"),
                           style: TextButton.styleFrom(
-                            foregroundColor: AppColors.deep_orange,
+                            foregroundColor: AppColors.deepOrange,
                           ),
                         ),
                     ],
@@ -304,11 +304,11 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
                             margin: EdgeInsets.only(right: 10.w),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? AppColors.deep_orange.withOpacity(0.1)
+                                  ? AppColors.deepOrange.withOpacity(0.1)
                                   : Colors.grey[100],
                               borderRadius: BorderRadius.circular(10.r),
                               border: isSelected
-                                  ? Border.all(color: AppColors.deep_orange)
+                                  ? Border.all(color: AppColors.deepOrange)
                                   : null,
                             ),
                             child: Column(
@@ -338,7 +338,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.deep_orange,
+                                    color: AppColors.deepOrange,
                                   ),
                                 ),
                               ],
@@ -484,12 +484,12 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
                     height: 60.h,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.deep_orange
+                          ? AppColors.deepOrange
                           : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(15.r),
                       border: Border.all(
                         color: isSelected
-                            ? AppColors.deep_orange
+                            ? AppColors.deepOrange
                             : Colors.grey.shade300,
                         width: 2,
                       ),
@@ -581,7 +581,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
                 Text(
                   _selectedSize,
                   style: TextStyle(
-                    color: AppColors.deep_orange,
+                    color: AppColors.deepOrange,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -619,7 +619,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen>
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.deep_orange,
+              backgroundColor: AppColors.deepOrange,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.r),
               ),

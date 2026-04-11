@@ -1,6 +1,6 @@
 // Wishlist Service
 class WishlistService {
-  static List<Map<String, dynamic>> _wishlist = [
+  static final List<Map<String, dynamic>> _wishlist = [
     {
       'id': 'w1',
       'productId': 'p1',
@@ -39,7 +39,7 @@ class WishlistService {
     },
   ];
 
-  static List<Map<String, dynamic>> _collections = [
+  static final List<Map<String, dynamic>> _collections = [
     {
       'id': 'col1',
       'name': 'Tech Gadgets',

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/utils/order_statistics_service.dart';
 
 class OrderStatisticsScreen extends StatefulWidget {
+  const OrderStatisticsScreen({super.key});
+
   @override
   _OrderStatisticsScreenState createState() => _OrderStatisticsScreenState();
 }
@@ -204,7 +206,7 @@ class _OrderStatisticsScreenState extends State<OrderStatisticsScreen> {
               padding: EdgeInsets.all(20.w),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.deep_orange, Colors.orange],
+                  colors: [AppColors.deepOrange, Colors.orange],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -248,7 +250,7 @@ class _OrderStatisticsScreenState extends State<OrderStatisticsScreen> {
                     child: Text(
                       "রিডিম করুন",
                       style: TextStyle(
-                        color: AppColors.deep_orange,
+                        color: AppColors.deepOrange,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -283,12 +285,12 @@ class _OrderStatisticsScreenState extends State<OrderStatisticsScreen> {
                     Container(
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppColors.deep_orange.withOpacity(0.1),
+                        color: AppColors.deepOrange.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
                         Icons.shopping_bag,
-                        color: AppColors.deep_orange,
+                        color: AppColors.deepOrange,
                       ),
                     ),
                     SizedBox(width: 15.w),
@@ -335,7 +337,7 @@ class _OrderStatisticsScreenState extends State<OrderStatisticsScreen> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

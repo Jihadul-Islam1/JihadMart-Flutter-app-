@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Widget fetchData(String collectionName) {
@@ -18,14 +17,14 @@ Widget fetchData(String collectionName) {
       return ListView.builder(
         itemCount: snapshot.data == null ? 0 : snapshot.data!.docs.length,
         itemBuilder: (_, index) {
-          DocumentSnapshot _documentSnapshot = snapshot.data!.docs[index];
+          DocumentSnapshot documentSnapshot = snapshot.data!.docs[index];
 
           return Card(
             elevation: 5,
             child: ListTile(
-              leading: Text(_documentSnapshot['name']),
+              leading: Text(documentSnapshot['name']),
               title: Text(
-                "৳ ${_documentSnapshot['price']}",
+                "৳ ${documentSnapshot['price']}",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.red,
@@ -38,7 +37,7 @@ Widget fetchData(String collectionName) {
                       .collection(collectionName)
                       .doc(FirebaseAuth.instance.currentUser!.email)
                       .collection("items")
-                      .doc(_documentSnapshot.id)
+                      .doc(documentSnapshot.id)
                       .delete();
                 },
               ),

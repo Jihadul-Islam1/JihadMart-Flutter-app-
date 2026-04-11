@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class LoyaltyService {
   static int _points = 0;
-  static List<Map<String, dynamic>> _pointsHistory = [];
+  static final List<Map<String, dynamic>> _pointsHistory = [];
   static String _membershipTier = "Bronze";
 
   // Points earned per 100 BDT spent

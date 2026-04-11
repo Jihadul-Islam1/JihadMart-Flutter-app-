@@ -1,8 +1,8 @@
 // Lucky Draw / Lottery Service
 class LotteryService {
   static int _userTickets = 5;
-  static int _totalTickets = 10000;
-  static List<Map<String, dynamic>> _prizes = [
+  static final int _totalTickets = 10000;
+  static final List<Map<String, dynamic>> _prizes = [
     {
       'position': '1st',
       'prize': 'iPhone 15 Pro Max',
@@ -28,19 +28,19 @@ class LotteryService {
       'position': '4th-10th',
       'prize': '৳10,000 Gift Card',
       'value': 10000.0,
-      'image': 'assets/logo/logo1.png',
+      'image': 'assets/logo/JihadMartlogo.png',
       'winner': null,
     },
     {
       'position': '11th-50th',
       'prize': '৳1,000 Coupon',
       'value': 1000.0,
-      'image': 'assets/logo/logo1.png',
+      'image': 'assets/logo/JihadMartlogo.png',
       'winner': null,
     },
   ];
 
-  static List<Map<String, dynamic>> _myTickets = [
+  static final List<Map<String, dynamic>> _myTickets = [
     {
       'ticketNumber': 'LK-2024-00892',
       'purchaseDate': DateTime.now().subtract(Duration(days: 5)),
@@ -60,7 +60,7 @@ class LotteryService {
     {'ticketNumber': 'LK-2024-04123', 'purchaseDate': DateTime.now()},
   ];
 
-  static DateTime _drawDate = DateTime.now().add(Duration(days: 7));
+  static final DateTime _drawDate = DateTime.now().add(Duration(days: 7));
 
   static int getUserTickets() => _userTickets;
   static int getTotalTickets() => _totalTickets;
@@ -94,7 +94,7 @@ class SpinWheelService {
   static int _spinsRemaining = 3;
   static DateTime? _lastSpinDate;
 
-  static List<Map<String, dynamic>> _rewards = [
+  static final List<Map<String, dynamic>> _rewards = [
     {'label': '৳50 OFF', 'type': 'coupon', 'value': 50, 'probability': 0.25},
     {'label': '৳100 OFF', 'type': 'coupon', 'value': 100, 'probability': 0.15},
     {'label': '৳200 OFF', 'type': 'coupon', 'value': 200, 'probability': 0.10},
@@ -110,7 +110,7 @@ class SpinWheelService {
     {'label': 'Better Luck', 'type': 'none', 'value': 0, 'probability': 0.07},
   ];
 
-  static List<Map<String, dynamic>> _wonRewards = [
+  static final List<Map<String, dynamic>> _wonRewards = [
     {
       'reward': '৳50 OFF',
       'wonAt': DateTime.now().subtract(Duration(days: 2)),

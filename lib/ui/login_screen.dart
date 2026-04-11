@@ -1,34 +1,38 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jihad/const/AppColors.dart';
-import 'package:jihad/ui/bottom_nav_controller.dart';
-import 'package:jihad/ui/admin/admin_dashboard.dart';
+import 'package:jihad/const/app_colors.dart';
 
 import 'package:jihad/ui/email_auth_screen.dart';
 import 'package:jihad/ui/phone_auth_screen.dart';
 import 'package:jihad/ui/registration_screen.dart';
 import 'package:jihad/ui/admin/admin_login_screen.dart';
+import 'package:jihad/ui/vendor/vendor_login_screen.dart';
+import 'package:jihad/features/shared/presentation/screens/role_gate_screen.dart';
 import 'package:jihad/widgets/customButton.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jihad/services/social_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
   bool _isLoading = false;
   final SocialAuthService _socialAuthService = SocialAuthService();
 
   // Focus nodes for keyboard management
-  FocusNode _emailFocusNode = FocusNode();
-  FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
   signIn() async {
     // First, dismiss the keyboard df
@@ -57,37 +61,33 @@ class _LoginScreenState extends State<LoginScreen> {
           );
 
       if (userCredential.user != null) {
-        // Safety check: If this is the admin email, redirect to Admin Dashboard
-        if (userCredential.user!.email == "admin@gmail.com") {
-          Fluttertoast.showToast(msg: "Welcome Admin!");
-          Navigator.pushAndRemoveUntil(
-            context,
-            CupertinoPageRoute(builder: (_) => AdminDashboard()),
-            (route) => false,
-          );
-        } else {
-          Fluttertoast.showToast(msg: "Login successful!");
-          Navigator.pushAndRemoveUntil(
-            context,
-            CupertinoPageRoute(builder: (_) => BottomNavController()),
-            (route) => false,
-          );
-        }
+        Fluttertoast.showToast(msg: "Login successful!");
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
+          (route) => false,
+        );
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(msg: "No user found for that email.");
       } else if (e.code == 'wrong-password') {
         Fluttertoast.showToast(msg: "Wrong password provided.");
+      } else if (e.code == 'invalid-credential') {
+        Fluttertoast.showToast(msg: "Invalid email or password.");
+      } else if (e.code == 'network-request-failed') {
+        Fluttertoast.showToast(msg: "No internet or Firebase network error.");
       } else {
-        Fluttertoast.showToast(msg: "Error: ${e.message}");
+        Fluttertoast.showToast(msg: "${e.code}: ${e.message}");
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: "Something went wrong. Please try again.");
+      Fluttertoast.showToast(msg: "Login error: $e");
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -95,18 +95,24 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = true;
     });
-    UserCredential? user = await _socialAuthService.signInWithGoogle();
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (user != null) {
-      Fluttertoast.showToast(msg: "Google Login Successful!");
-      Navigator.pushAndRemoveUntil(
-        context,
-        CupertinoPageRoute(builder: (_) => BottomNavController()),
-        (route) => false,
-      );
+    try {
+      final user = await _socialAuthService.signInWithGoogle();
+      if (user != null) {
+        Fluttertoast.showToast(msg: "Google Login Successful!");
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Google login error: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -114,18 +120,24 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = true;
     });
-    UserCredential? user = await _socialAuthService.signInWithFacebook();
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (user != null) {
-      Fluttertoast.showToast(msg: "Facebook Login Successful!");
-      Navigator.pushAndRemoveUntil(
-        context,
-        CupertinoPageRoute(builder: (_) => BottomNavController()),
-        (route) => false,
-      );
+    try {
+      final user = await _socialAuthService.signInWithFacebook();
+      if (user != null) {
+        Fluttertoast.showToast(msg: "Facebook Login Successful!");
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Facebook login error: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -172,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.deep_orange,
+      backgroundColor: AppColors.deepOrange,
       body: SafeArea(
         child: GestureDetector(
           onTap: () {
@@ -226,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "Welcome Back",
                             style: TextStyle(
                               fontSize: 22.sp,
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -246,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 height: 48.h,
                                 width: 41.w,
                                 decoration: BoxDecoration(
-                                  color: AppColors.deep_orange,
+                                  color: AppColors.deepOrange,
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 child: Center(
@@ -274,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     labelText: 'EMAIL',
                                     labelStyle: TextStyle(
                                       fontSize: 15.sp,
-                                      color: AppColors.deep_orange,
+                                      color: AppColors.deepOrange,
                                     ),
                                   ),
                                 ),
@@ -290,7 +302,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 height: 48.h,
                                 width: 41.w,
                                 decoration: BoxDecoration(
-                                  color: AppColors.deep_orange,
+                                  color: AppColors.deepOrange,
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 child: Center(
@@ -319,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     labelText: 'PASSWORD',
                                     labelStyle: TextStyle(
                                       fontSize: 15.sp,
-                                      color: AppColors.deep_orange,
+                                      color: AppColors.deepOrange,
                                     ),
                                     suffixIcon: IconButton(
                                       onPressed: () {
@@ -332,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ? Icons.visibility
                                             : Icons.visibility_off,
                                         size: 20.w,
-                                        color: AppColors.deep_orange,
+                                        color: AppColors.deepOrange,
                                       ),
                                     ),
                                   ),
@@ -351,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 "Forgot Password?",
                                 style: TextStyle(
                                   fontSize: 13.sp,
-                                  color: AppColors.deep_orange,
+                                  color: AppColors.deepOrange,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -462,12 +474,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               icon: Icon(
                                 Icons.email,
-                                color: AppColors.deep_orange,
+                                color: AppColors.deepOrange,
                               ),
                               label: Text(
                                 "Login with Email OTP",
                                 style: TextStyle(
-                                  color: AppColors.deep_orange,
+                                  color: AppColors.deepOrange,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -487,12 +499,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               icon: Icon(
                                 Icons.phone,
-                                color: AppColors.deep_orange,
+                                color: AppColors.deepOrange,
                               ),
                               label: Text(
                                 "Login with Phone",
                                 style: TextStyle(
-                                  color: AppColors.deep_orange,
+                                  color: AppColors.deepOrange,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -528,7 +540,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     style: TextStyle(
                                       fontSize: 13.sp,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColors.deep_orange,
+                                      color: AppColors.deepOrange,
                                     ),
                                   ),
                                 ),
@@ -537,24 +549,45 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
 
                           SizedBox(height: 20.h),
-                          // Admin Login Link
                           Center(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (_) => AdminLoginScreen(),
+                            child: Wrap(
+                              spacing: 10.w,
+                              runSpacing: 8.h,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (_) => const VendorLoginScreen(),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.storefront_outlined),
+                                  label: const Text('Vendor Login'),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: const Color(0xFF167D6A),
+                                    side: const BorderSide(color: Color(0xFF167D6A)),
                                   ),
-                                );
-                              },
-                              child: Text(
-                                "Admin Login",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (_) => const AdminLoginScreen(),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.admin_panel_settings_outlined),
+                                  label: const Text('Admin Login'),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: AppColors.deepOrange,
+                                    side: BorderSide(color: AppColors.deepOrange),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

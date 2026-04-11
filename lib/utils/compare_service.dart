@@ -1,6 +1,6 @@
 // Product Comparison Service
 class CompareService {
-  static List<Map<String, dynamic>> _compareList = [];
+  static final List<Map<String, dynamic>> _compareList = [];
   static const int maxCompareItems = 4;
 
   static List<Map<String, dynamic>> getCompareList() => _compareList;
@@ -142,7 +142,7 @@ class CompareService {
 
 // Product Bundle Service
 class BundleService {
-  static List<Map<String, dynamic>> _bundles = [
+  static final List<Map<String, dynamic>> _bundles = [
     {
       'id': 'bundle1',
       'name': 'Complete Tech Bundle',
@@ -187,7 +187,7 @@ class BundleService {
     },
   ];
 
-  static List<Map<String, dynamic>> _customBundles = [];
+  static final List<Map<String, dynamic>> _customBundles = [];
 
   static List<Map<String, dynamic>> getBundles() => _bundles;
   static List<Map<String, dynamic>> getCustomBundles() => _customBundles;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:jihad/utils/wallet_service.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -49,14 +49,14 @@ class _WalletScreenState extends State<WalletScreen> {
               padding: EdgeInsets.all(25.w),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [AppColors.deep_orange, Colors.orange],
+                  colors: [AppColors.deepOrange, Colors.orange],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.deep_orange.withOpacity(0.3),
+                    color: AppColors.deepOrange.withOpacity(0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -99,12 +99,12 @@ class _WalletScreenState extends State<WalletScreen> {
                           onPressed: () => _showAddMoneyDialog(context),
                           icon: const Icon(
                             Icons.add,
-                            color: AppColors.deep_orange,
+                            color: AppColors.deepOrange,
                           ),
                           label: Text(
                             "Add Money",
                             style: TextStyle(
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                               fontWeight: FontWeight.bold,
                               fontSize: 14.sp,
                             ),
@@ -204,7 +204,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   child: Text(
                     "See All",
                     style: TextStyle(
-                      color: AppColors.deep_orange,
+                      color: AppColors.deepOrange,
                       fontSize: 14.sp,
                     ),
                   ),
@@ -420,7 +420,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.deep_orange),
+                    borderSide: const BorderSide(color: AppColors.deepOrange),
                   ),
                 ),
               ),
@@ -443,12 +443,12 @@ class _WalletScreenState extends State<WalletScreen> {
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppColors.deep_orange
+                            ? AppColors.deepOrange
                             : Colors.grey[100],
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isSelected
-                              ? AppColors.deep_orange
+                              ? AppColors.deepOrange
                               : Colors.grey[300]!,
                         ),
                       ),
@@ -492,7 +492,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deep_orange,
+                    backgroundColor: AppColors.deepOrange,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

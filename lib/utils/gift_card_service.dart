@@ -1,6 +1,6 @@
 class GiftCardService {
-  static List<Map<String, dynamic>> _myGiftCards = [];
-  static List<Map<String, dynamic>> _purchasedGiftCards = [];
+  static final List<Map<String, dynamic>> _myGiftCards = [];
+  static final List<Map<String, dynamic>> _purchasedGiftCards = [];
 
   // Available gift card denominations
   static List<int> denominations = [500, 1000, 2000, 5000, 10000];

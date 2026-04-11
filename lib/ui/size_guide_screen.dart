@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 
 class SizeGuideScreen extends StatefulWidget {
   final String? category;
@@ -48,9 +48,9 @@ class _SizeGuideScreenState extends State<SizeGuideScreen>
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.deep_orange,
+          labelColor: AppColors.deepOrange,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: AppColors.deep_orange,
+          indicatorColor: AppColors.deepOrange,
           tabs: const [
             Tab(text: "Shoes"),
             Tab(text: "Shirts"),

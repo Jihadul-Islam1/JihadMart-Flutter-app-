@@ -1,14 +1,14 @@
 // Voice Search Service
 class VoiceSearchService {
   static bool _isListening = false;
-  static List<String> _recentVoiceSearches = [
+  static final List<String> _recentVoiceSearches = [
     'লাল টি-শার্ট',
     'ওয়্যারলেস ইয়ারবাড',
     'স্মার্ট ওয়াচ',
     'মোবাইল ফোন কভার',
   ];
 
-  static List<Map<String, dynamic>> _voiceCommands = [
+  static final List<Map<String, dynamic>> _voiceCommands = [
     {
       'command': 'সার্চ করো',
       'action': 'search',
@@ -78,8 +78,8 @@ class VoiceSearchService {
 
 // AR Try-On Service (Simulated)
 class ARService {
-  static bool _isSupported = true;
-  static List<String> _supportedCategories = [
+  static final bool _isSupported = true;
+  static final List<String> _supportedCategories = [
     'Glasses',
     'Watches',
     'Shoes',
@@ -89,7 +89,7 @@ class ARService {
     'Clothing',
   ];
 
-  static List<Map<String, dynamic>> _triedProducts = [
+  static final List<Map<String, dynamic>> _triedProducts = [
     {
       'id': 'ar1',
       'name': 'Ray-Ban Aviator',
@@ -138,7 +138,7 @@ class ARService {
 
 // Image Search Service
 class ImageSearchService {
-  static List<Map<String, dynamic>> _searchHistory = [
+  static final List<Map<String, dynamic>> _searchHistory = [
     {
       'id': 'img1',
       'imagePath': 'assets/products/product1.jpg',

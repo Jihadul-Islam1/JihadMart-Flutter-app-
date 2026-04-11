@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jihad/core/constants/firestore_collections.dart';
 import 'package:jihad/ui/product_details_screen.dart';
 
 class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
@@ -11,60 +15,15 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   var inputText = "";
 
-  // Sample products data - তোমার আসল products data দিয়ে replace করবে
-  // SearchScreen.dart file এ _allProducts list টি খুঁজে এই data দিয়ে replace করো:
-
-  List<Map<String, dynamic>> _allProducts = [
-    {
-      "product-name": "Nike Air Max",
-      "product-description": "Comfortable running shoes with latest technology",
-      "product-price": 120.00,
-      "product-img": ["assets/products/product1.jpg"],
-    },
-    {
-      "product-name": "Adidas Ultraboost",
-      "product-description": "Premium running shoes for professional athletes",
-      "product-price": 180.00,
-      "product-img": ["assets/products/product2.jpg"],
-    },
-    {
-      "product-name": "Puma RS-X",
-      "product-description": "Casual sports shoes with modern design",
-      "product-price": 90.00,
-      "product-img": ["assets/products/product3.jpg"],
-    },
-    {
-      "product-name": "Reebok Classic",
-      "product-description": "Vintage style shoes for everyday wear",
-      "product-price": 75.00,
-      "product-img": ["assets/products/product4.jpg"],
-    },
-  ];
-  List<Map<String, dynamic>> _filteredProducts = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredProducts = _allProducts;
-  }
-
-  void _filterProducts(String searchText) {
-    setState(() {
-      if (searchText.isEmpty) {
-        _filteredProducts = _allProducts;
-      } else {
-        _filteredProducts = _allProducts.where((product) {
-          final productName = product["product-name"].toString().toLowerCase();
-          final productDesc = product["product-description"]
-              .toString()
-              .toLowerCase();
-          final searchLower = searchText.toLowerCase();
-
-          return productName.contains(searchLower) ||
-              productDesc.contains(searchLower);
-        }).toList();
-      }
-    });
+  String _imageUrl(Map<String, dynamic> product) {
+    final raw = product['product-img'] ?? product['images'];
+    if (raw is List && raw.isNotEmpty) {
+      return raw.first.toString();
+    }
+    if (raw is String && raw.isNotEmpty) {
+      return raw;
+    }
+    return 'assets/products/product1.jpg';
   }
 
   @override
@@ -117,7 +76,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     setState(() {
                       inputText = val;
                     });
-                    _filterProducts(val);
                   },
                 ),
               ),
@@ -131,7 +89,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Found ${_filteredProducts.length} products",
+                      "Search real store products",
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: Colors.grey[600],
@@ -142,13 +100,12 @@ class _SearchScreenState extends State<SearchScreen> {
                         onPressed: () {
                           setState(() {
                             inputText = "";
-                            _filteredProducts = _allProducts;
                           });
                         },
                         child: Text(
                           "Clear",
                           style: TextStyle(
-                            color: AppColors.deep_orange,
+                            color: AppColors.deepOrange,
                             fontSize: 14.sp,
                           ),
                         ),
@@ -161,8 +118,43 @@ class _SearchScreenState extends State<SearchScreen> {
 
               // Search Results
               Expanded(
-                child: _filteredProducts.isEmpty
-                    ? Center(
+                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance
+                      .collection(FirestoreCollections.products)
+                      .orderBy('createdAt', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Search failed: ${snapshot.error}'),
+                      );
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final docs = snapshot.data?.docs ?? [];
+                    final filteredProducts = docs
+                        .map((doc) => <String, dynamic>{'id': doc.id, ...doc.data()})
+                        .where((product) {
+                          final searchLower = inputText.toLowerCase().trim();
+                          if (searchLower.isEmpty) return true;
+
+                          final productName = (product['product-name'] ?? '').toString().toLowerCase();
+                          final productDesc = (product['product-description'] ?? '').toString().toLowerCase();
+                          final storeName = (product['storeName'] ?? '').toString().toLowerCase();
+                          final category = (product['category'] ?? '').toString().toLowerCase();
+
+                          return productName.contains(searchLower) ||
+                              productDesc.contains(searchLower) ||
+                              storeName.contains(searchLower) ||
+                              category.contains(searchLower);
+                        })
+                        .toList();
+
+                    if (filteredProducts.isEmpty) {
+                      return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -174,7 +166,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             SizedBox(height: 16.h),
                             Text(
                               inputText.isEmpty
-                                  ? "No products available"
+                                  ? 'No products available'
                                   : "No products found for '$inputText'",
                               style: TextStyle(
                                 fontSize: 16.sp,
@@ -184,7 +176,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             SizedBox(height: 8.h),
                             if (inputText.isNotEmpty)
                               Text(
-                                "Try different keywords",
+                                'Try different keywords',
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   color: Colors.grey[400],
@@ -192,75 +184,92 @@ class _SearchScreenState extends State<SearchScreen> {
                               ),
                           ],
                         ),
-                      )
-                    : ListView.builder(
-                        itemCount: _filteredProducts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final product = _filteredProducts[index];
-                          return Card(
-                            elevation: 2,
-                            margin: EdgeInsets.only(bottom: 12.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                      );
+                    }
+
+                    return ListView.builder(
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final product = filteredProducts[index];
+                        final imagePath = _imageUrl(product);
+                        final isNetworkImage = imagePath.startsWith('http');
+
+                        return Card(
+                          elevation: 2,
+                          margin: EdgeInsets.only(bottom: 12.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.all(12.w),
+                            leading: Container(
+                              width: 60.w,
+                              height: 60.h,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                image: DecorationImage(
+                                  image: isNetworkImage
+                                      ? NetworkImage(imagePath)
+                                      : AssetImage(imagePath) as ImageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.all(12.w),
-                              leading: Container(
-                                width: 60.w,
-                                height: 60.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  image: DecorationImage(
-                                    image: AssetImage(
-                                      product['product-img'][0],
-                                    ),
-                                    fit: BoxFit.cover,
+                            title: Text(
+                              product['product-name']?.toString() ?? 'Unnamed product',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 4.h),
+                                Text(
+                                  product['product-description']?.toString() ?? '',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  "৳${product['product-price'].toString()}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.sp,
+                                    color: AppColors.deepOrange,
                                   ),
                                 ),
-                              ),
-                              title: Text(
-                                product['product-name'],
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                                if ((product['storeName'] ?? '').toString().isNotEmpty) ...[
                                   SizedBox(height: 4.h),
                                   Text(
-                                    product['product-description'],
+                                    'Shop: ${product['storeName']}',
                                     style: TextStyle(
                                       fontSize: 12.sp,
-                                      color: Colors.grey[600],
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  SizedBox(height: 4.h),
-                                  Text(
-                                    "৳${product['product-price'].toString()}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.sp,
-                                      color: AppColors.deep_orange,
+                                      color: Colors.grey[700],
                                     ),
                                   ),
                                 ],
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => ProductDetails(product),
-                                  ),
-                                );
-                              },
+                              ],
                             ),
-                          );
-                        },
-                      ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ProductDetails(product),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),

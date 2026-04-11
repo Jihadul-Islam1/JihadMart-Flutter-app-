@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // Brand Service
 class BrandService {
-  static List<Map<String, dynamic>> _brands = [
+  static final List<Map<String, dynamic>> _brands = [
     {
       'id': 'brand1',
       'name': 'Apple',
@@ -156,7 +156,7 @@ class BrandService {
 
 // Seller / Vendor Service
 class SellerService {
-  static List<Map<String, dynamic>> _sellers = [
+  static final List<Map<String, dynamic>> _sellers = [
     {
       'id': 'seller1',
       'name': 'Tech Hub BD',
@@ -249,7 +249,7 @@ class SellerService {
 
 // Product Questions & Answers Service
 class QnAService {
-  static List<Map<String, dynamic>> _questions = [
+  static final List<Map<String, dynamic>> _questions = [
     {
       'id': 'q1',
       'productId': 'p1',

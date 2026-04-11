@@ -1,6 +1,6 @@
 // Subscription Box Service - Monthly subscription boxes
 class SubscriptionService {
-  static List<Map<String, dynamic>> _subscriptionPlans = [
+  static final List<Map<String, dynamic>> _subscriptionPlans = [
     {
       'id': 'basic',
       'name': 'Basic Box',

@@ -1,17 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jihad/const/AppColors.dart';
+import 'package:jihad/const/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jihad/utils/cart_service.dart'; // Import the new service
 import 'package:jihad/ui/bottom_nav_controller.dart';
 import 'package:jihad/ui/checkout_screen.dart';
 
 class Cart extends StatefulWidget {
+  const Cart({super.key});
+
   @override
-  _CartState createState() => _CartState();
+  CartState createState() => CartState();
 }
 
-class _CartState extends State<Cart> {
+class CartState extends State<Cart> {
   List<Map<String, dynamic>> get _cartItems {
     return CartService.getCartItems();
   }
@@ -85,8 +87,15 @@ class _CartState extends State<Cart> {
     Navigator.push(
       context,
       CupertinoPageRoute(
-        builder: (_) =>
-            CheckoutScreen(cartItems: _cartItems, totalAmount: _totalPrice),
+        builder: (_) => CheckoutScreen(
+          cartItems: _cartItems,
+          subtotalAmount: _totalPrice,
+          shippingAmount: 10,
+          taxAmount: 5,
+          discountAmount: 0,
+          totalAmount: _totalPrice + 15,
+          shippingAddress: 'House 12, Road 5, Dhanmondi, Dhaka',
+        ),
       ),
     );
   }
@@ -134,7 +143,7 @@ class _CartState extends State<Cart> {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
+                                  color: Colors.grey.withAlpha(51),
                                   blurRadius: 10,
                                   spreadRadius: 5,
                                 ),
@@ -143,7 +152,7 @@ class _CartState extends State<Cart> {
                             child: Icon(
                               Icons.shopping_cart_outlined,
                               size: 60.sp,
-                              color: AppColors.deep_orange,
+                              color: AppColors.deepOrange,
                             ),
                           ),
                           SizedBox(height: 20.h),
@@ -174,16 +183,8 @@ class _CartState extends State<Cart> {
                                 ),
                               );
                             },
-                            child: Text(
-                              "Start Shopping",
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.deep_orange,
+                              backgroundColor: AppColors.deepOrange,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 40.w,
                                 vertical: 15.h,
@@ -192,6 +193,14 @@ class _CartState extends State<Cart> {
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               elevation: 5,
+                            ),
+                            child: Text(
+                              "Start Shopping",
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ],
@@ -213,7 +222,7 @@ class _CartState extends State<Cart> {
                             padding: EdgeInsets.only(right: 20.w),
                             margin: EdgeInsets.only(bottom: 15.h),
                             decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.1),
+                              color: Colors.red.withAlpha(25),
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: Icon(Icons.delete, color: Colors.red),
@@ -229,7 +238,7 @@ class _CartState extends State<Cart> {
                               borderRadius: BorderRadius.circular(15),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
+                                  color: Colors.grey.withAlpha(25),
                                   blurRadius: 10,
                                   offset: Offset(0, 5),
                                 ),
@@ -290,7 +299,7 @@ class _CartState extends State<Cart> {
                                             "৳${item['price']}",
                                             style: TextStyle(
                                               fontSize: 18.sp,
-                                              color: AppColors.deep_orange,
+                                              color: AppColors.deepOrange,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -360,7 +369,7 @@ class _CartState extends State<Cart> {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withAlpha(25),
                       blurRadius: 20,
                       offset: Offset(0, -5),
                     ),
@@ -423,7 +432,7 @@ class _CartState extends State<Cart> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20.sp,
-                            color: AppColors.deep_orange,
+                            color: AppColors.deepOrange,
                           ),
                         ),
                       ],
@@ -434,6 +443,14 @@ class _CartState extends State<Cart> {
                       height: 55.h,
                       child: ElevatedButton(
                         onPressed: _checkout,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.deepOrange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 5,
+                          shadowColor: AppColors.deepOrange.withAlpha(102),
+                        ),
                         child: Text(
                           "Proceed to Checkout",
                           style: TextStyle(
@@ -441,14 +458,6 @@ class _CartState extends State<Cart> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.deep_orange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          elevation: 5,
-                          shadowColor: AppColors.deep_orange.withOpacity(0.4),
                         ),
                       ),
                     ),

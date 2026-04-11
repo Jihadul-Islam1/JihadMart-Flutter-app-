@@ -1,6 +1,6 @@
 // Shipping & Delivery Service
 class ShippingService {
-  static List<Map<String, dynamic>> _shippingMethods = [
+  static final List<Map<String, dynamic>> _shippingMethods = [
     {
       'id': 'standard',
       'name': 'Standard Delivery',
@@ -43,7 +43,7 @@ class ShippingService {
     },
   ];
 
-  static List<Map<String, dynamic>> _deliveryPartners = [
+  static final List<Map<String, dynamic>> _deliveryPartners = [
     {'name': 'Pathao', 'rating': 4.5, 'deliveries': '50K+'},
     {'name': 'Paperfly', 'rating': 4.3, 'deliveries': '30K+'},
     {'name': 'RedX', 'rating': 4.2, 'deliveries': '25K+'},
@@ -97,7 +97,7 @@ class ShippingService {
 
 // Installment / EMI Service
 class InstallmentService {
-  static List<Map<String, dynamic>> _emiOptions = [
+  static final List<Map<String, dynamic>> _emiOptions = [
     {
       'months': 3,
       'interestRate': 0.0,
@@ -142,7 +142,7 @@ class InstallmentService {
     },
   ];
 
-  static List<Map<String, dynamic>> _activeEMIs = [
+  static final List<Map<String, dynamic>> _activeEMIs = [
     {
       'id': 'emi1',
       'orderId': 'ORD-2024-001',
@@ -203,7 +203,7 @@ class InstallmentService {
 
 // Insurance Service for Products
 class InsuranceService {
-  static List<Map<String, dynamic>> _plans = [
+  static final List<Map<String, dynamic>> _plans = [
     {
       'id': 'basic',
       'name': 'Basic Protection',
@@ -242,7 +242,7 @@ class InsuranceService {
     },
   ];
 
-  static List<Map<String, dynamic>> _activePolicies = [
+  static final List<Map<String, dynamic>> _activePolicies = [
     {
       'id': 'pol1',
       'product': 'iPhone 15 Pro Max',
