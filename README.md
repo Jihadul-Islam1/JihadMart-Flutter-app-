@@ -1,76 +1,90 @@
-# jihad
+# Jihad Mart
 
-A new Flutter project.
+Jihad Mart is a Flutter-based ecommerce app built on Firebase. It supports customer shopping, vendor catalog management, and admin operations in a single codebase.
 
-## AI Chatbot (Gemini) setup
+## What It Includes
 
-This app includes an AI Chatbot tab backed by Google Gemini via the `google_generative_ai` package.
+- Customer authentication with email/password, phone OTP, Google sign-in, Facebook login, and email OTP.
+- Product browsing, search, product details, cart, checkout, and order tracking.
+- Live Firestore-backed orders, notifications, and order status updates.
+- Vendor tools for onboarding, catalog management, and vendor-specific order queues.
+- Admin tools for user management, catalog oversight, orders, and audit logs.
+- AI chat support powered by Google Gemini.
+- SSLCommerz online payments.
+- Vendor image uploads through ImgBB.
 
-1) Get an API key from Google AI Studio.
-2) Preferred: create a `.env` file (copy from `.env.example`) and set:
+## Requirements
 
+- Flutter SDK 3.9 or newer.
+- A configured Firebase project for the app.
+- Android Studio, VS Code, or another Flutter-compatible IDE.
+
+## Setup
+
+1. Install dependencies:
+
+```bash
+flutter pub get
 ```
-GEMINI_API_KEY=YOUR_KEY
-```
 
-3) Run the app normally:
+2. Make sure Firebase is configured for the platforms you want to run.
 
-```
+3. Add your runtime configuration in a `.env` file at the project root or pass values with `--dart-define`.
+
+4. Run the app:
+
+```bash
 flutter run
 ```
 
-Alternatively, you can pass it at run time using Dart define:
+## Environment Variables
 
-```
-flutter run --dart-define=GEMINI_API_KEY=YOUR_KEY
-```
-
-Alternatively, you may hardcode the key in `lib/utils/ai/gemini_service.dart` by replacing `REPLACE_WITH_YOUR_KEY` (not recommended for production).
-
-You can change the model by editing `GeminiService.modelName`.
-
-## Vendor product image upload
-
-Vendor product photos use ImgBB as the default free image host. Set the key once in the project-level `.env` file and every vendor will use it automatically:
+`lib/core/config/app_config.dart` reads these values from `--dart-define` first, then from `.env` if available:
 
 ```env
-IMGBB_API_KEY=YOUR_IMGBB_KEY
-```
-
-The app already loads `.env` on startup, so you do not need to pass the key again for each vendor or each product upload. If `.env` is missing, you can still pass it with `--dart-define=IMGBB_API_KEY=YOUR_IMGBB_KEY`.
-
-## SSLCommerz payment setup
-
-Online payments are now integrated with `flutter_sslcommerz`.
-
-Follow the full setup and sandbox-to-live steps in `docs/sslcommerz-setup.md`.
-
-## Email OTP login setup
-
-Email OTP login uses SMTP. Add these to `.env` before testing:
-
-```env
+IMGBB_API_KEY=your_imgbb_key
+SSLCOMMERZ_STORE_ID=your_store_id
+SSLCOMMERZ_STORE_PASSWORD=your_store_password
+SSLCOMMERZ_IS_SANDBOX=true
 EMAIL_OTP_APP_NAME=Jihad Mart
-EMAIL_OTP_APP_EMAIL=your-smtp-sender@example.com
+EMAIL_OTP_APP_EMAIL=your_smtp_sender@example.com
 EMAIL_OTP_SMTP_HOST=smtp.gmail.com
-EMAIL_OTP_SMTP_USERNAME=your-smtp-username@example.com
-EMAIL_OTP_SMTP_PASSWORD=your-smtp-app-password
+EMAIL_OTP_SMTP_USERNAME=your_smtp_username@example.com
+EMAIL_OTP_SMTP_PASSWORD=your_smtp_app_password
 EMAIL_OTP_SMTP_PORT=587
 EMAIL_OTP_SMTP_SECURE_TYPE=tls
+GEMINI_API_KEY=your_gemini_key
 ```
 
-For Gmail, use an app password, not your normal account password.
+You can also pass values directly when launching Flutter:
 
+```bash
+flutter run --dart-define=IMGBB_API_KEY=your_imgbb_key --dart-define=SSLCOMMERZ_STORE_ID=your_store_id --dart-define=SSLCOMMERZ_STORE_PASSWORD=your_store_password
+```
 
-## Getting Started
+## Firebase Notes
 
-This project is a starting point for a Flutter application.
+- Firebase is initialized from the splash flow.
+- Firestore is used for products, orders, notifications, roles, vendor requests, and audit logs.
+- Cloud Functions are referenced by the app for admin and role-management workflows.
 
-A few resources to get you started if this is your first Flutter project:
+## Project Structure
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- `lib/app` - app bootstrap and shell widgets.
+- `lib/core` - config, models, constants, and repositories.
+- `lib/features` - customer, vendor, admin, and shared feature screens.
+- `lib/ui` - legacy and shared UI screens.
+- `lib/utils` - service classes and helpers.
+- `docs` - setup and project notes.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Useful Docs
+
+- [SSLCommerz setup](docs/sslcommerz-setup.md)
+- [Firestore schema](docs/firestore-schema.md)
+- [Firestore security checklist](docs/firestore-security-checklist.md)
+- [Deployment next steps](docs/deployment-next-steps.md)
+
+## Notes
+
+- For Gmail SMTP, use an app password instead of your normal account password.
+- If you are testing payments, keep `SSLCOMMERZ_IS_SANDBOX=true` until you switch to live credentials.
