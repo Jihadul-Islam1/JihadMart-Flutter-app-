@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jihad/core/services/user_role_service.dart';
-import 'package:jihad/features/shared/presentation/screens/role_gate_screen.dart';
+import 'package:jihad/features/vendor/presentation/screens/vendor_panel_shell.dart';
 import 'package:jihad/ui/admin/admin_login_screen.dart';
 
 class VendorLoginScreen extends StatefulWidget {
@@ -15,6 +15,8 @@ class VendorLoginScreen extends StatefulWidget {
 }
 
 class _VendorLoginScreenState extends State<VendorLoginScreen> {
+  static const Duration _roleTimeout = Duration(seconds: 5);
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
@@ -34,18 +36,18 @@ class _VendorLoginScreenState extends State<VendorLoginScreen> {
     });
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
 
-      final role = await UserRoleService.resolveCurrentRole();
+      final role = await UserRoleService.resolveRole(
+        userCredential.user,
+      ).timeout(_roleTimeout, onTimeout: () => AppRole.customer);
       if (role == AppRole.vendor) {
         if (!mounted) return;
         Fluttertoast.showToast(msg: 'Vendor login successful!');
         Navigator.pushAndRemoveUntil(
           context,
-          CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
+          CupertinoPageRoute(builder: (_) => const VendorPanelShell()),
           (route) => false,
         );
         return;
@@ -69,16 +71,16 @@ class _VendorLoginScreenState extends State<VendorLoginScreen> {
       } else {
         Fluttertoast.showToast(msg: 'Error: ${e.message}');
       }
-     } catch (e) {
-       Fluttertoast.showToast(msg: 'Something went wrong: $e');
-     } finally {
-       if (mounted) {
-         setState(() {
-           _isLoading = false;
-         });
-       }
-     }
-   }
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Something went wrong: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -120,10 +122,7 @@ class _VendorLoginScreenState extends State<VendorLoginScreen> {
                 SizedBox(height: 8.h),
                 Text(
                   'Login with your approved seller account to manage products and orders.',
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    color: Colors.white70,
-                  ),
+                  style: TextStyle(fontSize: 13.sp, color: Colors.white70),
                 ),
                 SizedBox(height: 24.h),
                 Container(
@@ -152,7 +151,9 @@ class _VendorLoginScreenState extends State<VendorLoginScreen> {
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscureText ? Icons.visibility_off : Icons.visibility,
+                              _obscureText
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
                             onPressed: () {
                               setState(() {
@@ -185,7 +186,9 @@ class _VendorLoginScreenState extends State<VendorLoginScreen> {
                                   ),
                                 )
                               : const Icon(Icons.storefront_outlined),
-                          label: Text(_isLoading ? 'Signing in...' : 'Login as Vendor'),
+                          label: Text(
+                            _isLoading ? 'Signing in...' : 'Login as Vendor',
+                          ),
                         ),
                       ),
                       SizedBox(height: 10.h),
@@ -220,7 +223,10 @@ class _VendorLoginScreenState extends State<VendorLoginScreen> {
                       Expanded(
                         child: Text(
                           'Not a vendor yet? Use "Become a Seller" from customer profile.',
-                          style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12.sp,
+                          ),
                         ),
                       ),
                     ],

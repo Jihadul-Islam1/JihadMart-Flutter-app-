@@ -5,12 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jihad/const/app_colors.dart';
 
+import 'package:jihad/core/services/user_role_service.dart';
+import 'package:jihad/features/admin/presentation/screens/admin_panel_shell.dart';
+import 'package:jihad/features/customer/presentation/screens/customer_panel_shell.dart';
+import 'package:jihad/features/vendor/presentation/screens/vendor_panel_shell.dart';
+import 'package:jihad/features/shared/presentation/screens/role_gate_screen.dart';
 import 'package:jihad/ui/email_auth_screen.dart';
 import 'package:jihad/ui/phone_auth_screen.dart';
 import 'package:jihad/ui/registration_screen.dart';
 import 'package:jihad/ui/admin/admin_login_screen.dart';
 import 'package:jihad/ui/vendor/vendor_login_screen.dart';
-import 'package:jihad/features/shared/presentation/screens/role_gate_screen.dart';
 import 'package:jihad/widgets/customButton.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,6 +28,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  static const Duration _authTimeout = Duration(seconds: 20);
+  static const Duration _roleTimeout = Duration(seconds: 5);
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
@@ -44,7 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    if (!_emailController.text.contains('@')) {
+    final email = _emailController.text.trim().toLowerCase();
+    final password = _passwordController.text.trim();
+
+    if (!email.contains('@')) {
       Fluttertoast.showToast(msg: "Please enter a valid email");
       return;
     }
@@ -54,17 +64,34 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password)
+          .timeout(_authTimeout);
 
-      if (userCredential.user != null) {
+      final signedInUser = userCredential.user;
+      if (signedInUser != null) {
+        final role = await UserRoleService.resolveRole(
+          signedInUser,
+        ).timeout(_roleTimeout, onTimeout: () => AppRole.customer);
+        if (!mounted) return;
+
         Fluttertoast.showToast(msg: "Login successful!");
         Navigator.pushAndRemoveUntil(
           context,
-          CupertinoPageRoute(builder: (_) => const RoleGateScreen()),
+          CupertinoPageRoute(
+            builder: (_) {
+              switch (role) {
+                case AppRole.admin:
+                  return const AdminPanelShell();
+                case AppRole.vendor:
+                  return const VendorPanelShell();
+                case AppRole.customer:
+                  return const CustomerPanelShell();
+                case AppRole.guest:
+                  return const CustomerPanelShell();
+              }
+            },
+          ),
           (route) => false,
         );
       }
@@ -80,6 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         Fluttertoast.showToast(msg: "${e.code}: ${e.message}");
       }
+    } on TimeoutException {
+      Fluttertoast.showToast(
+        msg: "Login timed out. Please check your internet connection.",
+      );
     } catch (e) {
       Fluttertoast.showToast(msg: "Login error: $e");
     } finally {
@@ -560,7 +591,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Navigator.push(
                                       context,
                                       CupertinoPageRoute(
-                                        builder: (_) => const VendorLoginScreen(),
+                                        builder: (_) =>
+                                            const VendorLoginScreen(),
                                       ),
                                     );
                                   },
@@ -568,7 +600,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   label: const Text('Vendor Login'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: const Color(0xFF167D6A),
-                                    side: const BorderSide(color: Color(0xFF167D6A)),
+                                    side: const BorderSide(
+                                      color: Color(0xFF167D6A),
+                                    ),
                                   ),
                                 ),
                                 OutlinedButton.icon(
@@ -576,15 +610,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Navigator.push(
                                       context,
                                       CupertinoPageRoute(
-                                        builder: (_) => const AdminLoginScreen(),
+                                        builder: (_) =>
+                                            const AdminLoginScreen(),
                                       ),
                                     );
                                   },
-                                  icon: const Icon(Icons.admin_panel_settings_outlined),
+                                  icon: const Icon(
+                                    Icons.admin_panel_settings_outlined,
+                                  ),
                                   label: const Text('Admin Login'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: AppColors.deepOrange,
-                                    side: BorderSide(color: AppColors.deepOrange),
+                                    side: BorderSide(
+                                      color: AppColors.deepOrange,
+                                    ),
                                   ),
                                 ),
                               ],

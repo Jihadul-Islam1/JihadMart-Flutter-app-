@@ -1,26 +1,38 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:jihad/core/services/user_role_service.dart';
 import 'package:jihad/features/admin/presentation/screens/admin_panel_shell.dart';
 import 'package:jihad/features/customer/presentation/screens/customer_panel_shell.dart';
 import 'package:jihad/features/vendor/presentation/screens/vendor_panel_shell.dart';
 import 'package:jihad/ui/login_screen.dart';
 
-class RoleGateScreen extends StatelessWidget {
+class RoleGateScreen extends StatefulWidget {
   const RoleGateScreen({super.key});
 
+  @override
+  State<RoleGateScreen> createState() => _RoleGateScreenState();
+}
+
+class _RoleGateScreenState extends State<RoleGateScreen> {
   static const Duration _resolveTimeout = Duration(seconds: 2);
+  late final Future<AppRole> _resolvedRoleFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolvedRoleFuture = UserRoleService.resolveCurrentRole().timeout(
+      _resolveTimeout,
+      onTimeout: () {
+        final user = FirebaseAuth.instance.currentUser;
+        return user == null ? AppRole.guest : AppRole.customer;
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<AppRole>(
-      future: UserRoleService.resolveCurrentRole().timeout(
-        _resolveTimeout,
-        onTimeout: () {
-          final user = FirebaseAuth.instance.currentUser;
-          return user == null ? AppRole.guest : AppRole.customer;
-        },
-      ),
+      future: _resolvedRoleFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const _RoleGateLoadingScreen();
@@ -52,8 +64,6 @@ class _RoleGateLoadingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
