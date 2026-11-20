@@ -1,6 +1,7 @@
 {
   "projects": {
-    "jihad": "jihad-ecommerce"
+    "jihad": "jihad-ecommerce",
+    "default": "jihad-ecommerce"
   },
   "targets": {},
   "etags": {}

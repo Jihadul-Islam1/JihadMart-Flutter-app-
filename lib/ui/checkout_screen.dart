@@ -225,7 +225,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(_appliedPromo.isEmpty ? "Apply" : "Applied"),
+                    child: Text(_appliedPromo.isEmpty ? "Apply" : "Applied",  style: TextStyle( color: _appliedPromo.isEmpty ? Colors.white  : Colors.black,),),          
                   ),
                 ],
               ),

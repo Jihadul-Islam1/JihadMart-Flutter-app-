@@ -51,6 +51,7 @@ class BottomNavControllerState extends State<BottomNavController> {
             _buildNavItem(2, Icons.shopping_cart, "Cart"),
             _buildNavItem(3, Icons.smart_toy_outlined, "AI"),
             _buildNavItem(4, Icons.person, "Profile"),
+            
           ],
         ),
       ),

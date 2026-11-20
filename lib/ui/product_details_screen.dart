@@ -881,6 +881,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           child: const Text('Buy Now', style: TextStyle(color: Colors.white)),
                         ),
                       ),
+                      
                     ],
                   ),
                 ),

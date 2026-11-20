@@ -9,7 +9,7 @@ import 'package:jihad/ui/profile/my_orders.dart';
 import 'package:jihad/ui/settings_screen.dart';
 import 'package:jihad/ui/support_screen.dart';
 import 'package:jihad/ui/bottom_nav_pages/favourite.dart';
-import 'package:jihad/utils/recently_viewed_service.dart';
+// import 'package:jihad/utils/recently_viewed_service.dart';
 import 'package:jihad/widgets/flash_sale_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jihad/ui/profile/voice_search_screen.dart';
@@ -194,7 +194,7 @@ class _HomeState extends State<Home> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: "E-",
+                text: "Jihad-",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -202,7 +202,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               TextSpan(
-                text: "Commerce",
+                text: "Mart",
                 style: TextStyle(
                   color: AppColors.deepOrange,
                   fontWeight: FontWeight.bold,
@@ -460,117 +460,117 @@ class _HomeState extends State<Home> {
 
                 SizedBox(height: 20.h),
 
-                // Recently Viewed
-                if (RecentlyViewedService.getRecentlyViewed().isNotEmpty) ...[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Recently Viewed",
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              RecentlyViewedService.clearAll();
-                            });
-                          },
-                          child: Text(
-                            "Clear All",
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: AppColors.deepOrange,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  SizedBox(
-                    height: 120.h,
-                    child: ListView.builder(
-                      padding: EdgeInsets.only(left: 20.w),
-                      scrollDirection: Axis.horizontal,
-                      itemCount:
-                          RecentlyViewedService.getRecentlyViewed().length,
-                      itemBuilder: (context, index) {
-                        var product =
-                            RecentlyViewedService.getRecentlyViewed()[index];
+                // // Recently Viewed
+                // if (RecentlyViewedService.getRecentlyViewed().isNotEmpty) ...[
+                //   Padding(
+                //     padding: EdgeInsets.symmetric(horizontal: 20.w),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Text(
+                //           "Recently Viewed",
+                //           style: TextStyle(
+                //             fontSize: 18.sp,
+                //             fontWeight: FontWeight.bold,
+                //           ),
+                //         ),
+                //         TextButton(
+                //           onPressed: () {
+                //             setState(() {
+                //               RecentlyViewedService.clearAll();
+                //             });
+                //           },
+                //           child: Text(
+                //             "Clear All",
+                //             style: TextStyle(
+                //               fontSize: 14.sp,
+                //               color: AppColors.deepOrange,
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                //   SizedBox(height: 10.h),
+                //   SizedBox(
+                //     height: 120.h,
+                //     child: ListView.builder(
+                //       padding: EdgeInsets.only(left: 20.w),
+                //       scrollDirection: Axis.horizontal,
+                //       itemCount:
+                //           RecentlyViewedService.getRecentlyViewed().length,
+                //       itemBuilder: (context, index) {
+                //         var product =
+                //             RecentlyViewedService.getRecentlyViewed()[index];
 
-                        // Handle image
-                        var imageList = product["product-img"];
-                        String imagePath =
-                            (imageList is List && imageList.isNotEmpty)
-                            ? imageList[0]
-                            : "";
-                        bool isNetworkImage = imagePath.startsWith('http');
+                //         // Handle image
+                //         var imageList = product["product-img"];
+                //         String imagePath =
+                //             (imageList is List && imageList.isNotEmpty)
+                //             ? imageList[0]
+                //             : "";
+                //         bool isNetworkImage = imagePath.startsWith('http');
 
-                        return GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (_) => ProductDetails(product),
-                            ),
-                          ),
-                          child: Container(
-                            width: 100.w,
-                            margin: EdgeInsets.only(right: 12.w),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12.r),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  blurRadius: 5,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(12.r),
-                                      ),
-                                      image: DecorationImage(
-                                        image: isNetworkImage
-                                            ? NetworkImage(imagePath)
-                                            : AssetImage(imagePath)
-                                                  as ImageProvider,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.w),
-                                  child: Text(
-                                    "৳${product["product-price"]}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12.sp,
-                                      color: AppColors.deepOrange,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                ],
+                //         return GestureDetector(
+                //           onTap: () => Navigator.push(
+                //             context,
+                //             CupertinoPageRoute(
+                //               builder: (_) => ProductDetails(product),
+                //             ),
+                //           ),
+                //           child: Container(
+                //             width: 100.w,
+                //             margin: EdgeInsets.only(right: 12.w),
+                //             decoration: BoxDecoration(
+                //               color: Colors.white,
+                //               borderRadius: BorderRadius.circular(12.r),
+                //               boxShadow: [
+                //                 BoxShadow(
+                //                   color: Colors.grey.withOpacity(0.1),
+                //                   blurRadius: 5,
+                //                   spreadRadius: 1,
+                //                 ),
+                //               ],
+                //             ),
+                //             child: Column(
+                //               crossAxisAlignment: CrossAxisAlignment.center,
+                //               children: [
+                //                 Expanded(
+                //                   child: Container(
+                //                     decoration: BoxDecoration(
+                //                       borderRadius: BorderRadius.vertical(
+                //                         top: Radius.circular(12.r),
+                //                       ),
+                //                       image: DecorationImage(
+                //                         image: isNetworkImage
+                //                             ? NetworkImage(imagePath)
+                //                             : AssetImage(imagePath)
+                //                                   as ImageProvider,
+                //                         fit: BoxFit.cover,
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ),
+                //                 Padding(
+                //                   padding: EdgeInsets.all(8.w),
+                //                   child: Text(
+                //                     "৳${product["product-price"]}",
+                //                     style: TextStyle(
+                //                       fontWeight: FontWeight.bold,
+                //                       fontSize: 12.sp,
+                //                       color: AppColors.deepOrange,
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //     ),
+                //   ),
+                //   SizedBox(height: 20.h),
+                // ],
 
                 // Top Brands
                 Padding(
